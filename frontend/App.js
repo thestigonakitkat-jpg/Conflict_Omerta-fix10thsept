@@ -26,6 +26,10 @@ export default function App() {
   const [nextRebootTime, setNextRebootTime] = useState(null);
   const [rebootWarning, setRebootWarning] = useState(false);
   const [showContactManager, setShowContactManager] = useState(false);
+  const [showRemoteKillSystem, setShowRemoteKillSystem] = useState(false);
+  const [messageExpiryEnabled, setMessageExpiryEnabled] = useState(true);
+  const [customExpiryMinutes, setCustomExpiryMinutes] = useState(null);
+  const [clipboardRestricted, setClipboardRestricted] = useState(false);
   
   const { 
     isAuthenticated, 

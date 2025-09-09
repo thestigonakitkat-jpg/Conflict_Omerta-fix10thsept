@@ -40,6 +40,8 @@ export default function App() {
   const [vaultConfigured, setVaultConfigured] = useState(false);
   const [vaultUnlocked, setVaultUnlocked] = useState(false);
   const [fakeDialMode, setFakeDialMode] = useState(false);
+  const [showVideoCall, setShowVideoCall] = useState(false);
+  const [videoCallConfig, setVideoCallConfig] = useState(null);
   
   const { 
     isAuthenticated, 

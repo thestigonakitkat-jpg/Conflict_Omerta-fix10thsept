@@ -485,6 +485,33 @@ export default function App() {
         }}
         currentExpiryMinutes={customExpiryMinutes}
       />
+
+      {/* Vault Double Security Setup Modal */}
+      <VaultDoubleSecuritySetup
+        visible={showVaultSetup}
+        onClose={() => setShowVaultSetup(false)}
+        onSetupComplete={() => {
+          setVaultConfigured(true);
+          setShowVaultSetup(false);
+          Alert.alert('Setup Complete', 'Vault double security is now configured. You can now access your secure vault.');
+        }}
+      />
+
+      {/* Vault Double Security Unlock Modal */}
+      <VaultDoubleSecurityUnlock
+        visible={showVaultUnlock}
+        onClose={() => setShowVaultUnlock(false)}
+        onUnlocked={() => {
+          setVaultUnlocked(true);
+          setFakeDialMode(false);
+          console.log('✅ Vault unlocked successfully');
+        }}
+        onFakeDialActivated={() => {
+          setFakeDialMode(true);
+          setVaultUnlocked(false);
+          console.log('🎭 Fake dial mode activated - showing decoy content');
+        }}
+      />
       
       <StatusBar style="light" />
     </View>

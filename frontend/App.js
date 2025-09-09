@@ -543,7 +543,7 @@ export default function App() {
         }}
       />
       
-      {/* LiveKit Video Call Modal */}
+      {/* LiveKit Video Call Modal - Temporarily disabled
       <LiveKitVideoCall
         visible={showVideoCall}
         onClose={() => {
@@ -556,6 +556,7 @@ export default function App() {
           enableVoiceScramble: true
         }}
       />
+      */}
       
       {/* Group Chat Manager Modal */}
       <GroupChatManager

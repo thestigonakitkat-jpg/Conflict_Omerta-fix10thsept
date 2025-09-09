@@ -9,12 +9,15 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@livekit/react-native": "^2.3.0",
+    "@livekit/react-native-webrtc": "^125.0.0",
     "@react-native-async-storage/async-storage": "^2.2.0",
     "expo": "~53.0.22",
     "expo-clipboard": "^7.1.5",
     "expo-crypto": "^14.1.5",
     "expo-secure-store": "^14.2.3",
     "expo-status-bar": "~2.2.3",
+    "livekit-client": "^2.3.0",
     "react": "19.0.0",
     "react-native": "0.79.6",
     "zustand": "^5.0.8"

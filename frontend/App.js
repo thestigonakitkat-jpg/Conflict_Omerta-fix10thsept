@@ -532,6 +532,20 @@ export default function App() {
         }}
       />
       
+      {/* LiveKit Video Call Modal */}
+      <LiveKitVideoCall
+        visible={showVideoCall}
+        onClose={() => {
+          setShowVideoCall(false);
+          setVideoCallConfig(null);
+        }}
+        roomConfig={videoCallConfig}
+        securitySettings={{
+          enableFaceBlur: true,
+          enableVoiceScramble: true
+        }}
+      />
+      
       <StatusBar style="light" />
     </View>
   );

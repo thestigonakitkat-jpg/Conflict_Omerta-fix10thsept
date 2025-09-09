@@ -420,6 +420,16 @@ export default function App() {
         visible={showContactManager}
         onClose={() => setShowContactManager(false)}
       />
+
+      {/* Remote Kill System Modal */}
+      <RemoteKillSystem
+        visible={showRemoteKillSystem}
+        onClose={() => setShowRemoteKillSystem(false)}
+        targetDevice={{
+          id: 'target_device_classified',
+          oid: 'target_oid_redacted'
+        }}
+      />
       
       <StatusBar style="light" />
     </View>

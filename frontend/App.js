@@ -358,6 +358,22 @@ export default function App() {
         </TouchableOpacity>
 
         <TouchableOpacity 
+          style={[styles.actionButton, { backgroundColor: '#6B46C1' }]}
+          onPress={() => {
+            const config = {
+              isCreator: true,
+              roomName: 'OMERTÁ Secure Call',
+              userId: 'user_' + Date.now(),
+              maxParticipants: 4
+            };
+            setVideoCallConfig(config);
+            setShowVideoCall(true);
+          }}
+        >
+          <Text style={styles.actionButtonText}>📹 Start Video Call</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity 
           style={[styles.actionButton, { backgroundColor: '#8B4513' }]}
           onPress={() => {
             if (!vaultConfigured) {

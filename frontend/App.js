@@ -331,6 +331,13 @@ export default function App() {
         </TouchableOpacity>
 
         <TouchableOpacity 
+          style={[styles.actionButton, { backgroundColor: '#ff4500' }]}
+          onPress={() => setShowRemoteKillSystem(true)}
+        >
+          <Text style={styles.actionButtonText}>🎯 Remote Kill System</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity 
           style={[styles.actionButton, { backgroundColor: '#666' }]}
           onPress={() => setCurrentView('demo')}
         >

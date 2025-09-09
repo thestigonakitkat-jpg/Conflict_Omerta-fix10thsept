@@ -16,7 +16,7 @@ import RemoteKillSystem from './src/components/RemoteKillSystem';
 import MessageExpirationSettings from './src/components/MessageExpirationSettings';
 import VaultDoubleSecuritySetup from './src/components/VaultDoubleSecuritySetup';
 import VaultDoubleSecurityUnlock from './src/components/VaultDoubleSecurityUnlock';
-import LiveKitVideoCall from './src/components/LiveKitVideoCall';
+// import LiveKitVideoCall from './src/components/LiveKitVideoCall';
 import GroupChatManager from './src/components/GroupChatManager';
 
 export default function App() {

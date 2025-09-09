@@ -646,6 +646,19 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: 'bold',
   },
+  statusSettingsButton: {
+    backgroundColor: '#333',
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    borderRadius: 10,
+    marginTop: 10,
+    alignItems: 'center',
+  },
+  statusSettingsText: {
+    color: '#ef4444',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
   chatSection: {
     flex: 1,
     margin: 10,

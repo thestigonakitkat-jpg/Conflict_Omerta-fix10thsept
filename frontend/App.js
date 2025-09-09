@@ -34,6 +34,11 @@ export default function App() {
   const [customExpiryMinutes, setCustomExpiryMinutes] = useState(null);
   const [clipboardRestricted, setClipboardRestricted] = useState(false);
   const [showMessageExpirationSettings, setShowMessageExpirationSettings] = useState(false);
+  const [showVaultSetup, setShowVaultSetup] = useState(false);
+  const [showVaultUnlock, setShowVaultUnlock] = useState(false);
+  const [vaultConfigured, setVaultConfigured] = useState(false);
+  const [vaultUnlocked, setVaultUnlocked] = useState(false);
+  const [fakeDialMode, setFakeDialMode] = useState(false);
   
   const { 
     isAuthenticated, 

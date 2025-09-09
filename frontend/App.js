@@ -301,6 +301,18 @@ export default function App() {
                 {rebootWarning ? '⚠️ WARNING' : '2AM/2PM'}
               </Text>
             </View>
+            <View style={styles.statusItem}>
+              <Text style={styles.statusLabel}>Msg Expiration</Text>
+              <Text style={styles.statusValue}>
+                {messageExpiryEnabled ? '⏰ ACTIVE' : '❌ DISABLED'}
+              </Text>
+            </View>
+            <View style={styles.statusItem}>
+              <Text style={styles.statusLabel}>Clipboard</Text>
+              <Text style={styles.statusValue}>
+                {clipboardRestricted ? '🚫 RESTRICTED' : '✅ NORMAL'}
+              </Text>
+            </View>
           </View>
         </View>
 

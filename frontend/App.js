@@ -360,6 +360,13 @@ export default function App() {
         </TouchableOpacity>
 
         <TouchableOpacity 
+          style={[styles.actionButton, { backgroundColor: '#10B981' }]}
+          onPress={() => setShowGroupChatManager(true)}
+        >
+          <Text style={styles.actionButtonText}>👥 Group Chats</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity 
           style={[styles.actionButton, { backgroundColor: '#6B46C1' }]}
           onPress={() => {
             const config = {

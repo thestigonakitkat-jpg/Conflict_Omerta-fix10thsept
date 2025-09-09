@@ -31,6 +31,7 @@ export default function App() {
   const [messageExpiryEnabled, setMessageExpiryEnabled] = useState(true);
   const [customExpiryMinutes, setCustomExpiryMinutes] = useState(null);
   const [clipboardRestricted, setClipboardRestricted] = useState(false);
+  const [showMessageExpirationSettings, setShowMessageExpirationSettings] = useState(false);
   
   const { 
     isAuthenticated, 

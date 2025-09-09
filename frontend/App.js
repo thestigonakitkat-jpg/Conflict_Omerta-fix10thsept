@@ -137,6 +137,11 @@ export default function App() {
       setCurrentView('main');
       startMonitoring();
       threatDetector.startMonitoring();
+      
+      // Enable clipboard restrictions on successful authentication
+      clipboardSecurityManager.enterSecureArea('main_app');
+      setClipboardRestricted(true);
+      console.log('🔒 Entered secure OMERTÁ environment - clipboard restricted');
     } else {
       Alert.alert('Authentication Failed', 'Invalid PIN entered');
       setPin('');

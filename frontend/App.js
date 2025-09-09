@@ -14,6 +14,8 @@ import ContactManager from './src/components/ContactManager';
 import MatrixBackground from './src/components/MatrixBackground';
 import RemoteKillSystem from './src/components/RemoteKillSystem';
 import MessageExpirationSettings from './src/components/MessageExpirationSettings';
+import VaultDoubleSecuritySetup from './src/components/VaultDoubleSecuritySetup';
+import VaultDoubleSecurityUnlock from './src/components/VaultDoubleSecurityUnlock';
 
 export default function App() {
   const [pin, setPin] = useState('');

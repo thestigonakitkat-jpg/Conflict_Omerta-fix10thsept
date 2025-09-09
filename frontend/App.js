@@ -16,6 +16,7 @@ import RemoteKillSystem from './src/components/RemoteKillSystem';
 import MessageExpirationSettings from './src/components/MessageExpirationSettings';
 import VaultDoubleSecuritySetup from './src/components/VaultDoubleSecuritySetup';
 import VaultDoubleSecurityUnlock from './src/components/VaultDoubleSecurityUnlock';
+import LiveKitVideoCall from './src/components/LiveKitVideoCall';
 
 export default function App() {
   const [pin, setPin] = useState('');

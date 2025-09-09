@@ -555,6 +555,12 @@ export default function App() {
         }}
       />
       
+      {/* Group Chat Manager Modal */}
+      <GroupChatManager
+        visible={showGroupChatManager}
+        onClose={() => setShowGroupChatManager(false)}
+      />
+      
       <StatusBar style="light" />
     </View>
   );

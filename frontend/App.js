@@ -442,6 +442,18 @@ export default function App() {
         }}
       />
       
+      {/* Message Expiration Settings Modal */}
+      <MessageExpirationSettings
+        visible={showMessageExpirationSettings}
+        onClose={() => setShowMessageExpirationSettings(false)}
+        onExpirySelected={(minutes) => {
+          setCustomExpiryMinutes(minutes);
+          setMessageExpiryEnabled(minutes !== null);
+          console.log(`Message expiry set to: ${minutes ? minutes + ' minutes' : 'disabled'}`);
+        }}
+        currentExpiryMinutes={customExpiryMinutes}
+      />
+      
       <StatusBar style="light" />
     </View>
   );

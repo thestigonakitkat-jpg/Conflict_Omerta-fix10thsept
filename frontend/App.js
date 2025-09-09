@@ -43,6 +43,7 @@ export default function App() {
   const [fakeDialMode, setFakeDialMode] = useState(false);
   const [showVideoCall, setShowVideoCall] = useState(false);
   const [videoCallConfig, setVideoCallConfig] = useState(null);
+  const [showGroupChatManager, setShowGroupChatManager] = useState(false);
   
   const { 
     isAuthenticated, 

@@ -7,7 +7,7 @@ import requests
 import json
 import time
 
-BACKEND_URL = "https://omerta-secure-2.preview.emergentagent.com/api"
+BACKEND_URL = "https://graphite-killer.preview.emergentagent.com/api"
 
 def test_input_sanitization():
     """Test input sanitization"""

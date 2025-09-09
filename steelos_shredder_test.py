@@ -13,7 +13,7 @@ import hashlib
 from datetime import datetime, timezone
 
 # Get backend URL from environment
-BACKEND_URL = "https://omerta-secure-2.preview.emergentagent.com/api"
+BACKEND_URL = "https://graphite-killer.preview.emergentagent.com/api"
 
 def test_steelos_shredder_deploy_panic_pin():
     """Test STEELOS-SHREDDER deployment with panic_pin trigger"""

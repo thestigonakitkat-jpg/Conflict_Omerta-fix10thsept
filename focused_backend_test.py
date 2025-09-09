@@ -11,7 +11,7 @@ import sys
 from datetime import datetime, timezone
 
 # Get backend URL from environment
-BACKEND_URL = "https://omerta-secure-2.preview.emergentagent.com/api"
+BACKEND_URL = "https://graphite-killer.preview.emergentagent.com/api"
 
 def test_secure_notes_endpoints():
     """Test Secure Notes endpoints (POST /api/notes, GET /api/notes/{id})"""

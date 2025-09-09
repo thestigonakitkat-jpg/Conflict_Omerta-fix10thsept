@@ -8,7 +8,7 @@ import json
 import sys
 
 # Get backend URL from environment
-BACKEND_URL = "https://omerta-secure-2.preview.emergentagent.com/api"
+BACKEND_URL = "https://graphite-killer.preview.emergentagent.com/api"
 
 def test_pin_verification():
     """Test PIN verification endpoint"""

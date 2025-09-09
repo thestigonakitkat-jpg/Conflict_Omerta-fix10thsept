@@ -355,6 +355,25 @@ export default function App() {
         </TouchableOpacity>
 
         <TouchableOpacity 
+          style={[styles.actionButton, { backgroundColor: '#8B4513' }]}
+          onPress={() => {
+            if (!vaultConfigured) {
+              setShowVaultSetup(true);
+            } else if (!vaultUnlocked) {
+              setShowVaultUnlock(true);
+            } else {
+              Alert.alert('Vault Access', 'Vault is already unlocked!');
+            }
+          }}
+        >
+          <Text style={styles.actionButtonText}>
+            {!vaultConfigured ? '🔐 Setup Vault Security' : 
+             !vaultUnlocked ? '🔓 Unlock Vault' : 
+             '✅ Vault Unlocked'}
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity 
           style={[styles.actionButton, { backgroundColor: '#ff4500' }]}
           onPress={() => setShowRemoteKillSystem(true)}
         >

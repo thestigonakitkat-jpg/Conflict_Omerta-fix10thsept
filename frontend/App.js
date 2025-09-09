@@ -316,6 +316,15 @@ export default function App() {
               </Text>
             </View>
           </View>
+          
+          {/* Message Expiry Settings Access */}
+          <TouchableOpacity 
+            style={styles.statusSettingsButton}
+            onPress={() => setShowMessageExpirationSettings(true)}
+          >
+            <Text style={styles.statusSettingsText}>⏰ Message Expiry Settings</Text>
+          </TouchableOpacity>
+          </View>
         </View>
 
         <TouchableOpacity 

@@ -366,6 +366,7 @@ export default function App() {
           <Text style={styles.actionButtonText}>👥 Group Chats</Text>
         </TouchableOpacity>
 
+        {/* Video Call temporarily disabled for compatibility
         <TouchableOpacity 
           style={[styles.actionButton, { backgroundColor: '#6B46C1' }]}
           onPress={() => {
@@ -381,6 +382,7 @@ export default function App() {
         >
           <Text style={styles.actionButtonText}>📹 Start Video Call</Text>
         </TouchableOpacity>
+        */}
 
         <TouchableOpacity 
           style={[styles.actionButton, { backgroundColor: '#8B4513' }]}

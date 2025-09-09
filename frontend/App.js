@@ -17,6 +17,7 @@ import MessageExpirationSettings from './src/components/MessageExpirationSetting
 import VaultDoubleSecuritySetup from './src/components/VaultDoubleSecuritySetup';
 import VaultDoubleSecurityUnlock from './src/components/VaultDoubleSecurityUnlock';
 import LiveKitVideoCall from './src/components/LiveKitVideoCall';
+import GroupChatManager from './src/components/GroupChatManager';
 
 export default function App() {
   const [pin, setPin] = useState('');

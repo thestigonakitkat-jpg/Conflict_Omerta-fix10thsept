@@ -322,6 +322,12 @@ export default function App() {
                 {clipboardRestricted ? '🚫 RESTRICTED' : '✅ NORMAL'}
               </Text>
             </View>
+            <View style={styles.statusItem}>
+              <Text style={styles.statusLabel}>Vault Security</Text>
+              <Text style={styles.statusValue}>
+                {fakeDialMode ? '🎭 FAKE MODE' : vaultUnlocked ? '🔓 UNLOCKED' : vaultConfigured ? '🔒 LOCKED' : '⚙️ SETUP'}
+              </Text>
+            </View>
           </View>
           
           {/* Message Expiry Settings Access */}

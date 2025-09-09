@@ -1,155 +1,155 @@
 {
   "summary": {
     "total_tests": 24,
-    "passed_tests": 21,
-    "failed_tests": 3,
-    "success_rate": 87.5,
-    "timestamp": "2025-09-09T16:09:50.099808"
+    "passed_tests": 23,
+    "failed_tests": 1,
+    "success_rate": 95.83333333333334,
+    "timestamp": "2025-09-09T16:12:09.132517"
   },
   "detailed_results": [
     {
       "test": "Basic API Connectivity",
       "success": true,
       "details": "Root endpoint responding correctly",
-      "timestamp": "2025-09-09T16:09:49.723557"
+      "timestamp": "2025-09-09T16:12:08.767685"
     },
     {
       "test": "Graphite Defense Status",
-      "success": false,
-      "details": "System not operational: {'system_status': 'ERROR', 'error': 'Error 99 connecting to localhost:6379. Cannot assign requested address.', 'version': '1.0.0'}",
-      "timestamp": "2025-09-09T16:09:49.734204"
+      "success": true,
+      "details": "System operational with 5 signatures",
+      "timestamp": "2025-09-09T16:12:08.771622"
     },
     {
       "test": "Graphite Signatures Database",
       "success": true,
       "details": "Retrieved 5 signatures: High CPU Surveillance Pattern, Memory Scanning Indicator...",
-      "timestamp": "2025-09-09T16:09:49.737226"
+      "timestamp": "2025-09-09T16:12:08.774623"
     },
     {
       "test": "Graphite Threat Analysis",
       "success": true,
       "details": "Analysis complete - Level: 0, Confidence: 0.0%",
-      "timestamp": "2025-09-09T16:09:49.743334"
+      "timestamp": "2025-09-09T16:12:08.779379"
     },
     {
       "test": "Graphite Emergency Countermeasures",
-      "success": false,
-      "details": "HTTP 500",
-      "timestamp": "2025-09-09T16:09:49.746453"
+      "success": true,
+      "details": "Deployed 5 countermeasures",
+      "timestamp": "2025-09-09T16:12:08.782562"
     },
     {
       "test": "Admin Authentication",
       "success": true,
-      "details": "Admin admin_2d5a6d7f authenticated successfully",
-      "timestamp": "2025-09-09T16:09:49.749697"
+      "details": "Admin admin_8f6f3365 authenticated successfully",
+      "timestamp": "2025-09-09T16:12:08.786017"
     },
     {
       "test": "Admin Seed Info Retrieval",
       "success": true,
       "details": "BIP39 seed split: Admin1(6 words), Admin2(6 words)",
-      "timestamp": "2025-09-09T16:09:49.752495"
+      "timestamp": "2025-09-09T16:12:08.788755"
     },
     {
       "test": "Multi-Sig Operation Initiation",
       "success": true,
-      "details": "Operation admin_op_1757434189_a472c9c78c126044 created, expires in 5 minutes",
-      "timestamp": "2025-09-09T16:09:49.755797"
+      "details": "Operation admin_op_1757434328_26987089c3c3a700 created, expires in 5 minutes",
+      "timestamp": "2025-09-09T16:12:08.792167"
     },
     {
       "test": "Multi-Sig Admin1 Signature",
       "success": true,
       "details": "Admin1 signed successfully (1/2 signatures)",
-      "timestamp": "2025-09-09T16:09:49.758604"
+      "timestamp": "2025-09-09T16:12:08.795430"
     },
     {
       "test": "Multi-Sig Admin2 Signature & Execution",
       "success": true,
       "details": "Operation completed successfully - Status: KILL_TOKEN_DEPLOYED",
-      "timestamp": "2025-09-09T16:09:49.761765"
+      "timestamp": "2025-09-09T16:12:08.798696"
     },
     {
       "test": "Multi-Sig Operation Status",
       "success": true,
       "details": "Status retrieved - Completed: True, Signatures: 2/2",
-      "timestamp": "2025-09-09T16:09:49.764189"
+      "timestamp": "2025-09-09T16:12:08.801422"
     },
     {
       "test": "Secure Notes Creation",
       "success": true,
-      "details": "Note created: f29dbe9c..., Views left: 1",
-      "timestamp": "2025-09-09T16:09:49.767742"
+      "details": "Note created: 810e13d2..., Views left: 1",
+      "timestamp": "2025-09-09T16:12:08.804357"
     },
     {
       "test": "Secure Notes One-Time Read",
       "success": true,
       "details": "Note read successfully, purged after single read",
-      "timestamp": "2025-09-09T16:09:49.769918"
+      "timestamp": "2025-09-09T16:12:08.806814"
     },
     {
       "test": "STEELOS-Shredder Deployment",
       "success": true,
       "details": "CYANIDE TABLET deployed, kill token generated",
-      "timestamp": "2025-09-09T16:09:49.772767"
+      "timestamp": "2025-09-09T16:12:08.809790"
     },
     {
       "test": "STEELOS Kill Token Retrieval",
       "success": true,
       "details": "Kill token retrieved with valid signature (64 chars)",
-      "timestamp": "2025-09-09T16:09:49.775098"
+      "timestamp": "2025-09-09T16:12:08.812452"
     },
     {
       "test": "STEELOS One-Time Token Use",
       "success": true,
       "details": "Token consumed after first retrieval (one-time use verified)",
-      "timestamp": "2025-09-09T16:09:49.777262"
+      "timestamp": "2025-09-09T16:12:08.814707"
     },
     {
       "test": "Input Sanitization",
       "success": true,
       "details": "Blocked 6/7 malicious payloads",
-      "timestamp": "2025-09-09T16:09:49.792669"
+      "timestamp": "2025-09-09T16:12:08.831129"
     },
     {
       "test": "Rate Limiting Enforcement",
       "success": true,
       "details": "Rate limiting triggered after rapid requests",
-      "timestamp": "2025-09-09T16:09:49.799812"
+      "timestamp": "2025-09-09T16:12:08.838251"
     },
     {
       "test": "PIN Security - Normal PIN",
       "success": true,
       "details": "Normal PIN verification working",
-      "timestamp": "2025-09-09T16:09:49.937215"
+      "timestamp": "2025-09-09T16:12:08.967656"
     },
     {
       "test": "PIN Security - Panic PIN Detection",
       "success": true,
       "details": "Panic PIN detected, signed kill token generated",
-      "timestamp": "2025-09-09T16:09:50.087149"
+      "timestamp": "2025-09-09T16:12:09.119002"
     },
     {
       "test": "Contact Vault Storage",
       "success": true,
       "details": "Contacts stored successfully, backup ID: contacts...",
-      "timestamp": "2025-09-09T16:09:50.090343"
+      "timestamp": "2025-09-09T16:12:09.122355"
     },
     {
       "test": "Contact Vault Retrieval",
       "success": true,
       "details": "Retrieved 1 contacts successfully",
-      "timestamp": "2025-09-09T16:09:50.094344"
+      "timestamp": "2025-09-09T16:12:09.126551"
     },
     {
       "test": "Dual-Key Nuclear Protocol (Design A)",
       "success": true,
-      "details": "Operation initiated: DUAL_KEY_SYSTEM_RESET_1757434190_f9ba8b3389541b56",
-      "timestamp": "2025-09-09T16:09:50.097117"
+      "details": "Operation initiated: DUAL_KEY_SYSTEM_RESET_1757434329_bffa46909bbd84a0",
+      "timestamp": "2025-09-09T16:12:09.129681"
     },
     {
       "test": "Dual-Key Nuclear Protocol (Design B)",
       "success": false,
       "details": "HTTP 400",
-      "timestamp": "2025-09-09T16:09:50.099607"
+      "timestamp": "2025-09-09T16:12:09.132311"
     }
   ]
 }

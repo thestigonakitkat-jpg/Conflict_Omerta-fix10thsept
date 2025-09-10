@@ -1,13 +1,21 @@
 #!/usr/bin/env python3
 """
-🔒 OMERTÁ COMPREHENSIVE BACKEND SECURITY TESTING
+🔒 OMERTÁ COMPREHENSIVE BACKEND SECURITY TESTING - 24 SYSTEM TEST SUITE
 Testing all critical security systems as requested in the review.
 
-SYSTEMS UNDER TEST:
-1. Graphite Defense System (/api/graphite-defense/*)
-2. Admin System (/api/admin/*)  
-3. Core API Endpoints (/api/*)
-4. Security Features (rate limiting, input sanitization, authentication)
+SYSTEMS UNDER TEST (24 TOTAL):
+1. Basic API Connectivity (1 test)
+2. Secure Notes System (3 tests)
+3. Messaging Envelopes (3 tests) 
+4. STEELOS-Shredder System (3 tests)
+5. Contact Vault System (3 tests)
+6. Auto-Wipe System (3 tests)
+7. PIN Security System (2 tests)
+8. Admin Multi-Signature System (6 tests)
+9. File Sharing System (5 tests)
+10. Voice Message System (5 tests)
+11. Rate Limiting (1 test)
+12. Input Sanitization (1 test)
 """
 
 import asyncio
@@ -15,6 +23,7 @@ import json
 import requests
 import time
 import sys
+import io
 from typing import Dict, List, Any
 from datetime import datetime
 

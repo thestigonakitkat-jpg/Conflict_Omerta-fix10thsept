@@ -127,12 +127,15 @@ async def download_file(file_id: str, token: str):
             del files_storage[file_id]
             del encryption_keys[file_id]
         
-        # Return file
-        return FileResponse(
-            path=None,  # We're returning content directly
-            filename=file_data['filename'],
+        # Return file content as bytes
+        from fastapi.responses import Response
+        
+        return Response(
+            content=decrypted_content,
             media_type=file_data['content_type'],
-            content=decrypted_content
+            headers={
+                'Content-Disposition': f'attachment; filename="{file_data["filename"]}"'
+            }
         )
         
     except HTTPException:

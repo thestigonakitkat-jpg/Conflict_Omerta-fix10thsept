@@ -1184,8 +1184,8 @@ app.include_router(file_sharing_router, prefix="/api", tags=["file-sharing"])
 # Include the voice messages router with /api prefix
 app.include_router(voice_messages_router, prefix="/api", tags=["voice-messages"])
 
-# TODO: Re-enable security middleware after fixing
-# app.add_middleware(SecurityMiddleware)
+# Add security middleware FIRST (critical for protection)
+app.add_middleware(SecurityMiddleware)
 
 # CORS (after security middleware)
 app.add_middleware(

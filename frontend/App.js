@@ -12,6 +12,8 @@ import ContactManager from './src/components/ContactManager';
 import MatrixBackground from './src/components/MatrixBackground';
 import RemoteKillSystem from './src/components/RemoteKillSystem';
 import MessageExpirationSettings from './src/components/MessageExpirationSettings';
+import FileSharing from './src/components/FileSharing';
+import VoiceMessages from './src/components/VoiceMessages';
 
 export default function App() {
   const [pin, setPin] = useState('');

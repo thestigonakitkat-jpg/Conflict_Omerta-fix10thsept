@@ -1305,6 +1305,162 @@ class OMERTASecurityTester:
         except Exception as e:
             self.log_test("Rate Limiting Enforcement", False, f"Error: {str(e)}")
 
+    def test_admin_system(self):
+        """Test Admin System with Multi-Signature Operations (6 tests)"""
+        print("\n🔐 TESTING ADMIN SYSTEM")
+        
+        # 1. Test admin authentication
+        try:
+            auth_data = {
+                "admin_passphrase": "Omertaisthecode#01",
+                "device_id": "admin_test_device_001"
+            }
+            
+            response = requests.post(f"{BACKEND_URL}/admin/authenticate", 
+                                   json=auth_data, timeout=10)
+            if response.status_code == 200:
+                auth_result = response.json()
+                if auth_result.get('success') and auth_result.get('session_token'):
+                    session_token = auth_result['session_token']
+                    admin_id = auth_result.get('admin_id')
+                    self.log_test("Admin Authentication", True, f"Admin {admin_id} authenticated successfully")
+                    
+                    # Store session token for subsequent tests
+                    self.admin_session_token = session_token
+                    self.admin_id = admin_id
+                else:
+                    self.log_test("Admin Authentication", False, f"Authentication failed: {auth_result}")
+                    return
+            else:
+                self.log_test("Admin Authentication", False, f"HTTP {response.status_code}")
+                return
+        except Exception as e:
+            self.log_test("Admin Authentication", False, f"Error: {str(e)}")
+            return
+        
+        # 2. Test seed phrase information retrieval
+        try:
+            response = requests.get(f"{BACKEND_URL}/admin/seed/info", timeout=10)
+            if response.status_code == 200:
+                seed_info = response.json()
+                if seed_info.get('status') == 'success':
+                    seed_data = seed_info.get('seed_info', {})
+                    admin1_words = seed_data.get('admin1_words', [])
+                    admin2_words = seed_data.get('admin2_words', [])
+                    
+                    if len(admin1_words) == 6 and len(admin2_words) == 6:
+                        self.log_test("Admin Seed Info Retrieval", True, 
+                                    f"BIP39 seed split: Admin1({len(admin1_words)} words), Admin2({len(admin2_words)} words)")
+                        
+                        # Store seed words for multi-sig test
+                        self.admin1_words = admin1_words
+                        self.admin2_words = admin2_words
+                    else:
+                        self.log_test("Admin Seed Info Retrieval", False, "Invalid seed word counts")
+                else:
+                    self.log_test("Admin Seed Info Retrieval", False, f"Failed: {seed_info}")
+            else:
+                self.log_test("Admin Seed Info Retrieval", False, f"HTTP {response.status_code}")
+        except Exception as e:
+            self.log_test("Admin Seed Info Retrieval", False, f"Error: {str(e)}")
+        
+        # 3. Test multi-signature operation initiation
+        try:
+            multisig_data = {
+                "session_token": self.admin_session_token,
+                "operation_type": "remote_kill",
+                "target_device_id": "target_device_001",
+                "operation_data": {"reason": "Security test"}
+            }
+            
+            response = requests.post(f"{BACKEND_URL}/admin/multisig/initiate", 
+                                   json=multisig_data, timeout=10)
+            if response.status_code == 200:
+                result = response.json()
+                if result.get('success') and result.get('operation_id'):
+                    operation_id = result['operation_id']
+                    self.log_test("Multi-Sig Operation Initiation", True, 
+                                f"Operation {operation_id} created, expires in 5 minutes")
+                    
+                    # Store operation ID for signing test
+                    self.operation_id = operation_id
+                else:
+                    self.log_test("Multi-Sig Operation Initiation", False, f"Failed: {result}")
+            else:
+                self.log_test("Multi-Sig Operation Initiation", False, f"HTTP {response.status_code}")
+        except Exception as e:
+            self.log_test("Multi-Sig Operation Initiation", False, f"Error: {str(e)}")
+        
+        # 4. Test multi-signature operation signing (Admin 1)
+        try:
+            sign_data = {
+                "operation_id": self.operation_id,
+                "admin_seed_words": self.admin1_words,
+                "admin_passphrase": "Omertaisthecode#01",
+                "admin_id": "admin1"
+            }
+            
+            response = requests.post(f"{BACKEND_URL}/admin/multisig/sign", 
+                                   json=sign_data, timeout=10)
+            if response.status_code == 200:
+                result = response.json()
+                if result.get('success'):
+                    signatures_received = result.get('signatures_received', 0)
+                    self.log_test("Multi-Sig Admin1 Signature", True, 
+                                f"Admin1 signed successfully ({signatures_received}/2 signatures)")
+                else:
+                    self.log_test("Multi-Sig Admin1 Signature", False, f"Failed: {result}")
+            else:
+                self.log_test("Multi-Sig Admin1 Signature", False, f"HTTP {response.status_code}")
+        except Exception as e:
+            self.log_test("Multi-Sig Admin1 Signature", False, f"Error: {str(e)}")
+        
+        # 5. Test multi-signature operation signing (Admin 2) - Complete operation
+        try:
+            sign_data = {
+                "operation_id": self.operation_id,
+                "admin_seed_words": self.admin2_words,
+                "admin_passphrase": "Omertaisthecode#01",
+                "admin_id": "admin2"
+            }
+            
+            response = requests.post(f"{BACKEND_URL}/admin/multisig/sign", 
+                                   json=sign_data, timeout=10)
+            if response.status_code == 200:
+                result = response.json()
+                if result.get('success') and result.get('operation_completed'):
+                    execution_result = result.get('execution_result', {})
+                    status = execution_result.get('status', 'Unknown')
+                    self.log_test("Multi-Sig Admin2 Signature & Execution", True, 
+                                f"Operation completed successfully - Status: {status}")
+                else:
+                    self.log_test("Multi-Sig Admin2 Signature & Execution", False, f"Failed: {result}")
+            else:
+                self.log_test("Multi-Sig Admin2 Signature & Execution", False, f"HTTP {response.status_code}")
+        except Exception as e:
+            self.log_test("Multi-Sig Admin2 Signature & Execution", False, f"Error: {str(e)}")
+        
+        # 6. Test operation status check
+        try:
+            if hasattr(self, 'operation_id'):
+                response = requests.get(f"{BACKEND_URL}/admin/multisig/status/{self.operation_id}", timeout=10)
+                if response.status_code == 200:
+                    result = response.json()
+                    if result.get('status') == 'success':
+                        operation = result.get('operation', {})
+                        completed = operation.get('completed', False)
+                        signatures = operation.get('signatures_received', 0)
+                        self.log_test("Multi-Sig Operation Status", True, 
+                                    f"Status retrieved - Completed: {completed}, Signatures: {signatures}/2")
+                    else:
+                        self.log_test("Multi-Sig Operation Status", False, f"Failed: {result}")
+                else:
+                    self.log_test("Multi-Sig Operation Status", False, f"HTTP {response.status_code}")
+            else:
+                self.log_test("Multi-Sig Operation Status", False, "No operation ID available")
+        except Exception as e:
+            self.log_test("Multi-Sig Operation Status", False, f"Error: {str(e)}")
+
 if __name__ == "__main__":
     tester = OMERTASecurityTester()
     success_rate = tester.run_comprehensive_test()

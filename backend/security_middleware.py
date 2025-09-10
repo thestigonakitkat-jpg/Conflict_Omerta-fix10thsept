@@ -194,34 +194,104 @@ class SecurityMiddleware(BaseHTTPMiddleware):
         return real_ip
 
     def check_rate_limit(self, ip: str, endpoint: str) -> bool:
-        """Rate limiting that CANNOT be bypassed - enhanced security"""
+        """ENHANCED Rate limiting - PREVENTS NSA distributed attacks"""
         current_time = time.time()
         
-        # Multiple rate limiting tiers for different attack patterns
-        # Tier 1: Per-endpoint limiting
+        # MULTI-TIER RATE LIMITING to prevent computational resource attacks
+        
+        # Tier 1: Per-endpoint limiting (standard)
         endpoint_key = f"{ip}:{endpoint}"
         
         # Tier 2: Global IP limiting (prevents endpoint hopping)
         global_key = f"{ip}:global"
         
-        # Clean old entries for both tiers
-        for key in [endpoint_key, global_key]:
+        # Tier 3: COMPUTATIONAL RESOURCE TRACKING (stops NSA-style attacks)
+        resource_key = f"{ip}:resources"
+        
+        # Tier 4: ADAPTIVE RATE LIMITING (lowers limits for suspicious IPs)
+        adaptive_key = f"{ip}:adaptive"
+        
+        # Clean old entries for all tiers
+        for key in [endpoint_key, global_key, resource_key, adaptive_key]:
             self.rate_limits[key] = [
                 timestamp for timestamp in self.rate_limits[key] 
                 if current_time - timestamp < 60  # 1 minute window
             ]
         
-        # Check endpoint-specific limit (20 requests per minute per endpoint)
-        if len(self.rate_limits[endpoint_key]) >= 20:
+        # Check if IP has previous violations (adaptive limiting)
+        violation_history = len(self.rate_limits[adaptive_key])
+        
+        # DYNAMIC LIMITS based on threat assessment
+        if violation_history == 0:
+            # Clean IP - standard limits
+            endpoint_limit = 15  # requests per minute per endpoint
+            global_limit = 30    # total requests per minute
+            resource_limit = 20  # resource-intensive operations
+        elif violation_history < 3:
+            # Suspicious IP - reduced limits
+            endpoint_limit = 8
+            global_limit = 15
+            resource_limit = 10
+        else:
+            # Known attacker - severely restricted
+            endpoint_limit = 3
+            global_limit = 5
+            resource_limit = 3
+        
+        # COMPUTATIONAL RESOURCE DETECTION
+        # Heavy endpoints that attackers use for resource exhaustion
+        resource_intensive = [
+            '/api/admin/', '/api/graphite/', '/api/steelos/',
+            '/api/files/upload', '/api/voice/send'
+        ]
+        
+        is_resource_intensive = any(pattern in endpoint for pattern in resource_intensive)
+        
+        # Check Tier 1: Endpoint-specific limit
+        if len(self.rate_limits[endpoint_key]) >= endpoint_limit:
+            self.rate_limits[adaptive_key].append(current_time)  # Mark violation
             return False
         
-        # Check global limit (50 requests per minute total)
-        if len(self.rate_limits[global_key]) >= 50:
+        # Check Tier 2: Global limit (prevents endpoint hopping)
+        if len(self.rate_limits[global_key]) >= global_limit:
+            self.rate_limits[adaptive_key].append(current_time)  # Mark violation
             return False
         
-        # Add to both rate limit trackers
+        # Check Tier 3: Resource-intensive operations limit
+        if is_resource_intensive and len(self.rate_limits[resource_key]) >= resource_limit:
+            self.rate_limits[adaptive_key].append(current_time)  # Mark violation
+            return False
+        
+        # BURST DETECTION - Detects rapid-fire attacks (NSA tactic)
+        recent_requests = [
+            timestamp for timestamp in self.rate_limits[global_key]
+            if current_time - timestamp < 10  # Last 10 seconds
+        ]
+        
+        if len(recent_requests) >= 8:  # More than 8 requests in 10 seconds = burst attack
+            self.rate_limits[adaptive_key].append(current_time)  # Mark violation
+            return False
+        
+        # COMPUTATIONAL PATTERN DETECTION
+        if len(self.rate_limits[global_key]) >= 5:
+            # Check if requests are too evenly spaced (algorithmic)
+            intervals = []
+            sorted_requests = sorted(self.rate_limits[global_key][-5:])
+            for i in range(1, len(sorted_requests)):
+                intervals.append(sorted_requests[i] - sorted_requests[i-1])
+            
+            if intervals:
+                interval_variance = max(intervals) - min(intervals)
+                if interval_variance < 0.5:  # Too regular = bot attack
+                    self.rate_limits[adaptive_key].append(current_time)  # Mark violation
+                    return False
+        
+        # All checks passed - add to all relevant trackers
         self.rate_limits[endpoint_key].append(current_time)
         self.rate_limits[global_key].append(current_time)
+        
+        if is_resource_intensive:
+            self.rate_limits[resource_key].append(current_time)
         
         return True
 

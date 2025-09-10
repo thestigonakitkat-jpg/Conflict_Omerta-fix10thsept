@@ -333,6 +333,20 @@ export default function App() {
         </TouchableOpacity>
 
         <TouchableOpacity 
+          style={[styles.actionButton, { backgroundColor: '#9333ea' }]}
+          onPress={() => setShowFileSharing(true)}
+        >
+          <Text style={styles.actionButtonText}>📁 File Sharing</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity 
+          style={[styles.actionButton, { backgroundColor: '#059669' }]}
+          onPress={() => setShowVoiceMessages(true)}
+        >
+          <Text style={styles.actionButtonText}>🎤 Voice Messages</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity 
           style={[styles.actionButton, { backgroundColor: '#ff4500' }]}
           onPress={() => setShowRemoteKillSystem(true)}
         >

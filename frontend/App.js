@@ -322,47 +322,10 @@ export default function App() {
         </TouchableOpacity>
 
         <TouchableOpacity 
-          style={[styles.actionButton, { backgroundColor: '#10B981' }]}
-          onPress={() => setShowGroupChatManager(true)}
+          style={[styles.actionButton, { backgroundColor: '#ef4444' }]}
+          onPress={() => setShowMessageExpirationSettings(true)}
         >
-          <Text style={styles.actionButtonText}>👥 Group Chats</Text>
-        </TouchableOpacity>
-
-        {/* Video Call temporarily disabled for compatibility
-        <TouchableOpacity 
-          style={[styles.actionButton, { backgroundColor: '#6B46C1' }]}
-          onPress={() => {
-            const config = {
-              isCreator: true,
-              roomName: 'OMERTÁ Secure Call',
-              userId: 'user_' + Date.now(),
-              maxParticipants: 4
-            };
-            setVideoCallConfig(config);
-            setShowVideoCall(true);
-          }}
-        >
-          <Text style={styles.actionButtonText}>📹 Start Video Call</Text>
-        </TouchableOpacity>
-        */}
-
-        <TouchableOpacity 
-          style={[styles.actionButton, { backgroundColor: '#8B4513' }]}
-          onPress={() => {
-            if (!vaultConfigured) {
-              setShowVaultSetup(true);
-            } else if (!vaultUnlocked) {
-              setShowVaultUnlock(true);
-            } else {
-              Alert.alert('Vault Access', 'Vault is already unlocked!');
-            }
-          }}
-        >
-          <Text style={styles.actionButtonText}>
-            {!vaultConfigured ? '🔐 Setup Vault Security' : 
-             !vaultUnlocked ? '🔓 Unlock Vault' : 
-             '✅ Vault Unlocked'}
-          </Text>
+          <Text style={styles.actionButtonText}>⏰ Message Expiry Settings</Text>
         </TouchableOpacity>
 
         <TouchableOpacity 

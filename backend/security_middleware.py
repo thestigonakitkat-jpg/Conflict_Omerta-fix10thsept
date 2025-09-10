@@ -27,17 +27,22 @@ class SecurityMiddleware(BaseHTTPMiddleware):
         
         # Enhanced detection patterns... (rest stays the same)
         
-        # SQL injection patterns (comprehensive)
+        # Enhanced detection patterns
         self.sql_patterns = [
-            r"\b(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|EXEC|EXECUTE|UNION|OR|AND)\b",
-            r"(--|\#|\/\*|\*\/)",
-            r"\b(WAITFOR|DELAY|BENCHMARK|SLEEP)\b",
-            r"\b(INFORMATION_SCHEMA|SYSOBJECTS|SYSTABLES)\b",
-            r"('|(\\x27)|(\\x2D\\x2D))",
-            r"\bWHERE\b.*=.*\bOR\b.*=",
-            r"\bUNION\b.*\bSELECT\b",
-            r"\bINSERT\b.*\bINTO\b",
-            r"\bDROP\b.*\bTABLE\b",
+            # Union-based attacks
+            'union select', 'union all select', 'union distinct select',
+            # Boolean-based attacks  
+            'or 1=1', 'or 1 = 1', 'or true', 'and 1=1', 'and 1 = 1',
+            # Time-based attacks
+            'waitfor delay', 'sleep(', 'benchmark(', 'pg_sleep(',
+            # Information gathering
+            'information_schema', 'sysobjects', 'sys.tables', 'sys.columns',
+            'table_name', 'column_name', 'database()', 'version()',
+            # Command execution
+            'exec sp_', 'xp_cmdshell', 'sp_execute',
+            # Data modification
+            'drop table', 'delete from', 'truncate table', 'alter table',
+            'insert into', 'update set', 'create table', 'create user',
         ]
         
         # XSS patterns (comprehensive)

@@ -76,7 +76,7 @@ async def upload_file(
             'name': file.filename,
             'size': len(content),
             'expiry_time': time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(expiry_time)),
-            'download_link': f"/api/files/download/{file_id}?token={download_token}",
+            'download_link': f"/files/download/{file_id}?token={download_token}",
             'view_count': 0,
             'auto_destruct': auto_destruct,
             'encrypted': True

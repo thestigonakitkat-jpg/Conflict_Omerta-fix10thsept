@@ -1,0 +1,110 @@
+{
+  "summary": {
+    "total_tests": 8,
+    "passed_tests": 4,
+    "failed_tests": 4,
+    "security_score": 43.66197183098591,
+    "overall_score": 62.7077922077922,
+    "test_duration": 0.359100341796875,
+    "timestamp": "2025-09-10T19:05:58.959543"
+  },
+  "security_metrics": {
+    "sql_injection_blocking": 100.0,
+    "xss_attack_blocking": 30.0,
+    "command_injection_blocking": 0.0,
+    "rate_limiting_basic": true,
+    "rate_limiting_bypass_resistance": 100.0,
+    "csrf_protection": [
+      true,
+      true
+    ],
+    "security_headers_coverage": 90.9090909090909,
+    "input_sanitization_rate": 57.14285714285714,
+    "core_systems_functionality": 60.0
+  },
+  "success_criteria": {
+    "SQL injection blocking": true,
+    "XSS attack blocking": false,
+    "Command injection blocking": false,
+    "Rate limiting enforcement": true,
+    "Security headers": true,
+    "Input sanitization": false,
+    "Core systems functional": false
+  },
+  "threat_actor_assessments": {
+    "NSA/Five Eyes": [
+      62.7077922077922,
+      "LIMITED RESISTANCE"
+    ],
+    "Russian APT Groups": [
+      67.70779220779221,
+      "MODERATE RESISTANCE"
+    ],
+    "Chinese MSS": [
+      62.7077922077922,
+      "MODERATE RESISTANCE"
+    ],
+    "North Korean Cyber Units": [
+      72.70779220779221,
+      "GOOD RESISTANCE"
+    ]
+  },
+  "detailed_results": [
+    {
+      "test": "SQL Injection Blocking",
+      "success": true,
+      "details": "Blocked 10/10 payloads (100.0%)",
+      "points": 10,
+      "timestamp": "2025-09-10T19:05:58.624083"
+    },
+    {
+      "test": "XSS Attack Blocking",
+      "success": false,
+      "details": "Blocked 6/20 payloads (30.0%)",
+      "points": 10,
+      "timestamp": "2025-09-10T19:05:58.671014"
+    },
+    {
+      "test": "Command Injection Blocking",
+      "success": false,
+      "details": "Blocked 0/15 payloads (0.0%)",
+      "points": 10,
+      "timestamp": "2025-09-10T19:05:58.698859"
+    },
+    {
+      "test": "Rate Limiting Enforcement",
+      "success": true,
+      "details": "Basic limiting: True, Bypass resistance: 100.0%",
+      "points": 8,
+      "timestamp": "2025-09-10T19:05:58.748934"
+    },
+    {
+      "test": "CSRF Protection",
+      "success": true,
+      "details": "Generation: True, Validation: True",
+      "points": 5,
+      "timestamp": "2025-09-10T19:05:58.751614"
+    },
+    {
+      "test": "Security Headers",
+      "success": true,
+      "details": "10/11 headers present (90.9%)",
+      "points": 8,
+      "timestamp": "2025-09-10T19:05:58.754149"
+    },
+    {
+      "test": "Input Sanitization",
+      "success": false,
+      "details": "Blocked 12/21 malicious inputs (57.1%)",
+      "points": 10,
+      "timestamp": "2025-09-10T19:05:58.842452"
+    },
+    {
+      "test": "Core Systems Functionality",
+      "success": false,
+      "details": "3/5 systems working (60.0%)",
+      "points": 10,
+      "timestamp": "2025-09-10T19:05:58.959340"
+    }
+  ]
+}

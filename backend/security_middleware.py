@@ -112,7 +112,11 @@ class SecurityMiddleware(BaseHTTPMiddleware):
         
         # CSRF protection for state-changing operations
         if request.method in ["POST", "PUT", "DELETE", "PATCH"]:
-            if not self.validate_csrf_token(request):
+            # Skip CSRF for file uploads (multipart/form-data) - handled by FileUploadSecurityValidator
+            content_type = request.headers.get("content-type", "").lower()
+            if "multipart/form-data" in content_type:
+                pass  # Skip CSRF validation for file uploads
+            elif not self.validate_csrf_token(request):
                 return JSONResponse(
                     status_code=status.HTTP_403_FORBIDDEN,
                     content={"detail": "CSRF token validation failed"}

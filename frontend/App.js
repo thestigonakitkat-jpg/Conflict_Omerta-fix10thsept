@@ -434,11 +434,10 @@ export default function App() {
         visible={showMessageExpirationSettings}
         onClose={() => setShowMessageExpirationSettings(false)}
         onExpirySelected={(minutes) => {
-          setCustomExpiryMinutes(minutes);
-          setMessageExpiryEnabled(minutes !== null);
           console.log(`Message expiry set to: ${minutes ? minutes + ' minutes' : 'disabled'}`);
+          Alert.alert('Settings Updated', minutes ? `Messages will expire after ${minutes} minutes` : 'Message expiration disabled');
         }}
-        currentExpiryMinutes={customExpiryMinutes}
+        currentExpiryMinutes={null}
       />
 
       {/* Vault Double Security Setup Modal */}

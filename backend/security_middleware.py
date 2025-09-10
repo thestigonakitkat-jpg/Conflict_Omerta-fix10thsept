@@ -25,15 +25,15 @@ class SecurityMiddleware(BaseHTTPMiddleware):
         
         # SQL injection patterns (comprehensive)
         self.sql_patterns = [
-            r"(\b(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|EXEC|EXECUTE|UNION|OR|AND)\b)",
+            r"\b(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|EXEC|EXECUTE|UNION|OR|AND)\b",
             r"(--|\#|\/\*|\*\/)",
-            r"(\b(WAITFOR|DELAY|BENCHMARK|SLEEP)\b)",
-            r"(\b(INFORMATION_SCHEMA|SYSOBJECTS|SYSTABLES)\b)",
+            r"\b(WAITFOR|DELAY|BENCHMARK|SLEEP)\b",
+            r"\b(INFORMATION_SCHEMA|SYSOBJECTS|SYSTABLES)\b",
             r"('|(\\x27)|(\\x2D\\x2D))",
-            r"(\bWHERE\b.*=.*\bOR\b.*=)",
-            r"(\bUNION\b.*\bSELECT\b)",
-            r"(\bINSERT\b.*\bINTO\b)",
-            r"(\bDROP\b.*\bTABLE\b)",
+            r"\bWHERE\b.*=.*\bOR\b.*=",
+            r"\bUNION\b.*\bSELECT\b",
+            r"\bINSERT\b.*\bINTO\b",
+            r"\bDROP\b.*\bTABLE\b",
         ]
         
         # XSS patterns (comprehensive)

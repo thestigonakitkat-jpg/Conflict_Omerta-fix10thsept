@@ -41,25 +41,6 @@ export default function App() {
 
   // Initialize security systems
   useEffect(() => {
-    // Initialize clipboard security
-    clipboardSecurityManager.initialize();
-    
-    // Initialize message expiration system
-    messageExpirationManager.initialize().then(() => {
-      setMessageExpiryEnabled(true);
-      console.log('✅ Message expiration system initialized');
-      
-      // Set up expiration callbacks
-      messageExpirationManager.setCallbacks({
-        onMessageExpired: (message) => {
-          console.log(`💀 Message expired: ${message.id}`);
-        },
-        onCleanupComplete: (stats) => {
-          console.log(`🧹 Cleanup complete: ${stats.expired} expired, ${stats.active} active`);
-        }
-      });
-    });
-
     // Initialize threat detection
     threatDetector.initialize().then(() => {
       threatDetector.onThreatDetected((analysis) => {
@@ -115,8 +96,6 @@ export default function App() {
     return () => {
       threatDetector.stopMonitoring();
       autoRebootManager.stop();
-      messageExpirationManager.stop();
-      clipboardSecurityManager.disableRestrictions();
     };
   }, []);
 

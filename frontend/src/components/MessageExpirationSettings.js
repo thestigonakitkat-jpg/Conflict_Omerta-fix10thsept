@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     borderWidth: 2,
     borderColor: '#ef4444',
-    maxHeight: '90%',
+    maxHeight: '80%',
   },
   header: {
     backgroundColor: '#ef4444',
@@ -158,120 +158,59 @@ const styles = StyleSheet.create({
   content: {
     padding: 20,
   },
-  toggleContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+  description: {
+    color: '#fff',
+    fontSize: 16,
     marginBottom: 20,
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#333',
+    textAlign: 'center',
   },
-  toggleLabel: {
+  optionsContainer: {
+    marginBottom: 20,
+  },
+  optionButton: {
+    backgroundColor: '#222',
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#444',
+    alignItems: 'center',
+  },
+  selectedOption: {
+    backgroundColor: '#ef4444',
+    borderColor: '#fff',
+  },
+  optionText: {
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
   },
-  selectionContainer: {
-    backgroundColor: '#1a1a1a',
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 20,
-    alignItems: 'center',
-  },
-  selectionLabel: {
-    color: '#666',
-    fontSize: 12,
-    marginBottom: 5,
-  },
-  selectionValue: {
-    color: '#ef4444',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  sliderContainer: {
-    marginBottom: 20,
-  },
-  sliderLabel: {
+  selectedOptionText: {
     color: '#fff',
-    fontSize: 14,
-    marginBottom: 10,
-    textAlign: 'center',
   },
-  slider: {
-    width: '100%',
-    height: 40,
-  },
-  sliderLabels: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 10,
-  },
-  sliderLabelText: {
-    color: '#666',
-    fontSize: 12,
-  },
-  quickOptions: {
+  buttonsContainer: {
     marginBottom: 20,
   },
-  quickOptionsTitle: {
-    color: '#fff',
-    fontSize: 14,
-    marginBottom: 10,
-    textAlign: 'center',
-  },
-  quickButtonsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-  },
-  quickButton: {
-    backgroundColor: '#333',
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 15,
-    borderWidth: 1,
-    borderColor: '#666',
-  },
-  quickButtonActive: {
+  actionButton: {
     backgroundColor: '#ef4444',
-    borderColor: '#fff',
+    paddingVertical: 15,
+    borderRadius: 25,
+    alignItems: 'center',
+    marginBottom: 10,
   },
-  quickButtonText: {
+  disableButton: {
+    backgroundColor: '#666',
+  },
+  buttonText: {
     color: '#fff',
-    fontSize: 12,
+    fontSize: 16,
     fontWeight: 'bold',
-  },
-  advancedToggle: {
-    alignItems: 'center',
-    paddingVertical: 10,
-    marginBottom: 10,
-  },
-  advancedToggleText: {
-    color: '#666',
-    fontSize: 14,
-  },
-  advancedOptions: {
-    backgroundColor: '#1a1a1a',
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 20,
-  },
-  advancedButton: {
-    backgroundColor: '#333',
-    paddingVertical: 10,
-    borderRadius: 10,
-    marginBottom: 10,
-    alignItems: 'center',
-  },
-  advancedButtonText: {
-    color: '#fff',
-    fontSize: 14,
   },
   securityNotice: {
     backgroundColor: '#1a0a0a',
     padding: 15,
     borderRadius: 10,
-    marginBottom: 20,
     borderWidth: 1,
     borderColor: '#ef4444',
   },
@@ -280,21 +219,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: 'bold',
     marginBottom: 5,
+    textAlign: 'center',
   },
   securityNoticeText: {
     color: '#ccc',
     fontSize: 12,
-    lineHeight: 16,
-  },
-  confirmButton: {
-    backgroundColor: '#ef4444',
-    paddingVertical: 15,
-    borderRadius: 25,
-    alignItems: 'center',
-  },
-  confirmButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });

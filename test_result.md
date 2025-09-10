@@ -206,6 +206,9 @@ backend:
       - working: false
         agent: "testing"
         comment: "📁 NEW FILE SHARING SYSTEM TESTING: ✅ File upload endpoint working - files uploaded successfully with encryption and auto-destruct features ✅ File list endpoint working - returns active files count and cleanup statistics ✅ File cleanup endpoint working - expired files removal functional ❌ File download endpoint failing with HTTP 500 error - FileResponse implementation issue with direct content return ❌ File deletion endpoint failing with HTTP 404 - file not found after upload. Core file storage and encryption working but download/deletion endpoints need fixes. Upload generates valid file IDs and download tokens but retrieval mechanism has implementation issues."
+      - working: false
+        agent: "testing"
+        comment: "🚨 CRITICAL SECURITY AUDIT FINDINGS: File sharing system has MAJOR SECURITY VULNERABILITIES: 1) ❌ File download endpoint returns 404 due to double /api prefix in URL construction 2) ❌ NO INPUT VALIDATION - accepts malicious files (executables, scripts, path traversal attempts) 3) ❌ NO FILE TYPE RESTRICTIONS - allows .exe, .php, .js files 4) ❌ NO SIZE LIMITS - accepts 10MB+ files for DoS attacks 5) ❌ PATH TRAVERSAL VULNERABILITY - accepts filenames like '../../../etc/passwd' 6) ✅ File deletion works correctly 7) ✅ Voice message system works but also lacks input validation. SECURITY SCORE: 20/100 - IMMEDIATE FIXES REQUIRED before production deployment."
   - task: "NEW Voice Message System Implementation"
     implemented: true
     working: true

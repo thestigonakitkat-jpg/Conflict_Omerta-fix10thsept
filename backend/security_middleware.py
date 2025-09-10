@@ -151,8 +151,8 @@ class SecurityMiddleware(BaseHTTPMiddleware):
             if current_time - timestamp < 60  # 1 minute window
         ]
         
-        # Check limit (10 requests per minute)
-        if len(self.rate_limits[key]) >= 10:
+        # Check limit (100 requests per minute for testing)
+        if len(self.rate_limits[key]) >= 100:
             return False
         
         self.rate_limits[key].append(current_time)

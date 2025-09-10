@@ -178,8 +178,17 @@ class SecurityMiddleware(BaseHTTPMiddleware):
             return False
         
         data_lower = data.lower()
-        for pattern in self.sql_patterns:
-            if re.search(pattern, data_lower, re.IGNORECASE):
+        
+        # Simple string matching approach to avoid regex issues
+        dangerous_keywords = [
+            'union select', 'drop table', 'delete from', 'insert into',
+            'update set', 'create table', 'alter table', 'exec sp_',
+            'waitfor delay', 'or 1=1', 'and 1=1', '/*', '*/', '--',
+            'information_schema', 'sysobjects', 'sys.tables'
+        ]
+        
+        for keyword in dangerous_keywords:
+            if keyword in data_lower:
                 return True
         return False
 
@@ -189,8 +198,16 @@ class SecurityMiddleware(BaseHTTPMiddleware):
             return False
         
         data_lower = data.lower()
-        for pattern in self.xss_patterns:
-            if re.search(pattern, data_lower, re.IGNORECASE):
+        
+        # Simple string matching for XSS patterns
+        xss_patterns = [
+            '<script', '</script>', 'javascript:', 'onload=', 'onerror=',
+            'onclick=', 'onmouseover=', '<iframe', '<object', '<embed',
+            'eval(', 'expression(', 'vbscript:', 'data:text/html'
+        ]
+        
+        for pattern in xss_patterns:
+            if pattern in data_lower:
                 return True
         return False
 
@@ -199,8 +216,15 @@ class SecurityMiddleware(BaseHTTPMiddleware):
         if not data:
             return False
         
-        for pattern in self.command_patterns:
-            if re.search(pattern, data, re.IGNORECASE):
+        # Simple string matching for command injection
+        command_patterns = [
+            '|', '&', ';', '`', '$(', '${', '../', '/etc/', '/var/',
+            '/usr/', '/tmp/', '/home/', 'cmd', 'bash', 'sh', 'powershell',
+            'wget', 'curl', 'nc', 'netcat'
+        ]
+        
+        for pattern in command_patterns:
+            if pattern in data:
                 return True
         return False
 

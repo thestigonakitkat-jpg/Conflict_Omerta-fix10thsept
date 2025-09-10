@@ -225,6 +225,9 @@ async def check_auto_wipe_status(request: Request, device_id: str):
             "success": True,
             "wipe_pending": wipe_pending,
             "warning_active": warning_active,
+            "days_until_wipe": days_until_wipe,
+            "last_activity": config.get("last_activity_timestamp", 0),
+            "wipe_type": config.get("wipe_type", "unknown"),
             "status": status.dict(),
             "message": "Auto-wipe status checked"
         }

@@ -266,11 +266,11 @@ class SecurityMiddleware(BaseHTTPMiddleware):
             # Union-based attacks
             'union select', 'union all select', 'union distinct select',
             # Boolean-based attacks  
-            'or 1=1', 'or 1 = 1', 'or true', 'or 1', 'and 1=1', 'and 1 = 1',
+            ' or 1=1', ' or 1 = 1', ' or true', ' and 1=1', ' and 1 = 1',
             # Time-based attacks
             'waitfor delay', 'sleep(', 'benchmark(', 'pg_sleep(',
-            # Comment-based attacks
-            '--', '/*', '*/', '#',
+            # Comment-based attacks (more specific)
+            ' --', '/*', '*/',
             # Information gathering
             'information_schema', 'sysobjects', 'sys.tables', 'sys.columns',
             'table_name', 'column_name', 'database()', 'version()',

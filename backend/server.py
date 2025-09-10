@@ -307,21 +307,27 @@ async def get_csrf_token(request: Request):
     """Generate CSRF token for client"""
     client_ip = request.client.host if request.client else "unknown"
     
-    # Get security middleware instance
-    middleware = None
-    for m in app.user_middleware:
-        if hasattr(m, 'cls') and m.cls.__name__ == 'SecurityMiddleware':
-            middleware = m.cls
-            break
+    # Generate CSRF token using secrets module
+    import secrets
+    import hmac
+    import hashlib
+    import time
     
-    if middleware:
-        token = middleware.generate_csrf_token(middleware(), client_ip)
-        return {"csrf_token": token, "expires_in": 3600}
-    else:
-        # Fallback token generation
-        import secrets
-        token = secrets.token_urlsafe(32)
-        return {"csrf_token": token, "expires_in": 3600}
+    # Create a secure CSRF token
+    timestamp = str(int(time.time()))
+    random_bytes = secrets.token_bytes(32)
+    
+    # Create token data combining IP, timestamp, and random data
+    token_data = f"{client_ip}:{timestamp}:{random_bytes.hex()}"
+    
+    # Generate HMAC signature for token integrity
+    secret_key = b"OMERTA_CSRF_SECRET_2025"  # In production, use environment variable
+    signature = hmac.new(secret_key, token_data.encode(), hashlib.sha256).hexdigest()
+    
+    # Final token combines data and signature
+    csrf_token = f"{token_data}:{signature}"
+    
+    return {"csrf_token": csrf_token, "expires_in": 3600}
 
 
 @api_router.get("/")

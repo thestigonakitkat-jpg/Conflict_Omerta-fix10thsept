@@ -5,7 +5,7 @@
     "passed_tests": 35,
     "failed_tests": 1,
     "success_rate": 97.22222222222221,
-    "timestamp": "2025-09-10T18:51:26.627513",
+    "timestamp": "2025-09-10T19:28:16.185292",
     "test_categories": {
       "basic_api": 1,
       "secure_notes": 3,
@@ -25,217 +25,217 @@
       "test": "Basic API Connectivity",
       "success": true,
       "details": "Root endpoint responding correctly",
-      "timestamp": "2025-09-10T18:51:26.244862"
+      "timestamp": "2025-09-10T19:28:15.790843"
     },
     {
       "test": "Secure Notes Creation",
       "success": true,
-      "details": "Note created: ba773946..., Views left: 1",
-      "timestamp": "2025-09-10T18:51:26.261069"
+      "details": "Note created: e164f333..., Views left: 1",
+      "timestamp": "2025-09-10T19:28:15.795401"
     },
     {
       "test": "Secure Notes One-Time Read",
       "success": true,
       "details": "Note read successfully, purged after single read",
-      "timestamp": "2025-09-10T18:51:26.264814"
+      "timestamp": "2025-09-10T19:28:15.798435"
     },
     {
       "test": "Secure Notes TTL Expiry",
       "success": true,
       "details": "Second read correctly returned 404 (note purged)",
-      "timestamp": "2025-09-10T18:51:26.268173"
+      "timestamp": "2025-09-10T19:28:15.801282"
     },
     {
       "test": "Envelope Send",
       "success": true,
-      "details": "Envelope sent with ID: a76e32ae...",
-      "timestamp": "2025-09-10T18:51:26.272699"
+      "details": "Envelope sent with ID: 6234ea35...",
+      "timestamp": "2025-09-10T19:28:15.805094"
     },
     {
       "test": "Envelope Poll (First)",
       "success": true,
-      "details": "Message delivered: ID=a76e32ae..., From=user_sender_001",
-      "timestamp": "2025-09-10T18:51:26.276035"
+      "details": "Message delivered: ID=6234ea35..., From=user_sender_001",
+      "timestamp": "2025-09-10T19:28:15.808018"
     },
     {
       "test": "Envelope Delete-on-Delivery",
       "success": true,
       "details": "Second poll returned empty (delete-on-delivery working)",
-      "timestamp": "2025-09-10T18:51:26.279129"
+      "timestamp": "2025-09-10T19:28:15.810939"
     },
     {
       "test": "STEELOS-Shredder Deployment",
       "success": true,
       "details": "CYANIDE TABLET deployed, kill token generated",
-      "timestamp": "2025-09-10T18:51:26.283623"
+      "timestamp": "2025-09-10T19:28:15.815069"
     },
     {
       "test": "STEELOS Kill Token Retrieval",
       "success": true,
       "details": "Kill token retrieved with valid signature (64 chars)",
-      "timestamp": "2025-09-10T18:51:26.286747"
+      "timestamp": "2025-09-10T19:28:15.818052"
     },
     {
       "test": "STEELOS One-Time Token Use",
       "success": true,
       "details": "Token consumed after first retrieval (one-time use verified)",
-      "timestamp": "2025-09-10T18:51:26.289492"
+      "timestamp": "2025-09-10T19:28:15.820707"
     },
     {
       "test": "Contact Vault Storage",
       "success": true,
       "details": "Stored 2 contacts, backup ID: contacts...",
-      "timestamp": "2025-09-10T18:51:26.293794"
+      "timestamp": "2025-09-10T19:28:15.824882"
     },
     {
       "test": "Contact Vault Retrieval",
       "success": true,
       "details": "Retrieved 2 contacts successfully",
-      "timestamp": "2025-09-10T18:51:26.298208"
+      "timestamp": "2025-09-10T19:28:15.829293"
     },
     {
       "test": "Contact Vault Clear",
       "success": true,
       "details": "Vault cleared successfully",
-      "timestamp": "2025-09-10T18:51:26.300959"
+      "timestamp": "2025-09-10T19:28:15.832030"
     },
     {
       "test": "Auto-Wipe Configuration",
       "success": true,
       "details": "Configured 7-day auto-wipe for device",
-      "timestamp": "2025-09-10T18:51:26.304625"
+      "timestamp": "2025-09-10T19:28:15.835807"
     },
     {
       "test": "Auto-Wipe Activity Tracking",
       "success": true,
       "details": "Activity timestamp updated",
-      "timestamp": "2025-09-10T18:51:26.307839"
+      "timestamp": "2025-09-10T19:28:15.839213"
     },
     {
       "test": "Auto-Wipe Status Check",
       "success": false,
-      "details": "Status check failed: {'success': True, 'wipe_pending': False, 'warning_active': False, 'days_until_wipe': 7, 'last_activity': 0, 'wipe_type': 'app_data', 'status': {'device_id': 'test_device_autowipe_001', 'enabled': True, 'days_inactive': 7, 'wipe_type': 'app_data', 'last_activity': 1757530286, 'days_until_wipe': 7, 'warning_active': False, 'wipe_pending': False}, 'message': 'Auto-wipe status checked'}",
-      "timestamp": "2025-09-10T18:51:26.310882"
+      "details": "Status check failed: {'success': True, 'wipe_pending': False, 'warning_active': False, 'days_until_wipe': 7, 'last_activity': 0, 'wipe_type': 'app_data', 'status': {'device_id': 'test_device_autowipe_001', 'enabled': True, 'days_inactive': 7, 'wipe_type': 'app_data', 'last_activity': 1757532495, 'days_until_wipe': 7, 'warning_active': False, 'wipe_pending': False}, 'message': 'Auto-wipe status checked'}",
+      "timestamp": "2025-09-10T19:28:15.842205"
     },
     {
       "test": "PIN Security - Normal PIN",
       "success": true,
       "details": "Normal PIN verification working",
-      "timestamp": "2025-09-10T18:51:26.416619"
+      "timestamp": "2025-09-10T19:28:15.976674"
     },
     {
       "test": "PIN Security - Panic PIN Detection",
       "success": true,
       "details": "Panic PIN detected, signed kill token generated",
-      "timestamp": "2025-09-10T18:51:26.525394"
+      "timestamp": "2025-09-10T19:28:16.082499"
     },
     {
       "test": "Admin Authentication",
       "success": true,
-      "details": "Admin admin_922a6897 authenticated successfully",
-      "timestamp": "2025-09-10T18:51:26.530262"
+      "details": "Admin admin_88c46f04 authenticated successfully",
+      "timestamp": "2025-09-10T19:28:16.087403"
     },
     {
       "test": "Admin Seed Info Retrieval",
       "success": true,
       "details": "BIP39 seed split: Admin1(6 words), Admin2(6 words)",
-      "timestamp": "2025-09-10T18:51:26.533408"
+      "timestamp": "2025-09-10T19:28:16.090707"
     },
     {
       "test": "Multi-Sig Operation Initiation",
       "success": true,
-      "details": "Operation admin_op_1757530286_4588cc958c98bfb5 created, expires in 5 minutes",
-      "timestamp": "2025-09-10T18:51:26.537661"
+      "details": "Operation admin_op_1757532496_38667a1db55607ed created, expires in 5 minutes",
+      "timestamp": "2025-09-10T19:28:16.095343"
     },
     {
       "test": "Multi-Sig Admin1 Signature",
       "success": true,
       "details": "Admin1 signed successfully (1/2 signatures)",
-      "timestamp": "2025-09-10T18:51:26.542767"
+      "timestamp": "2025-09-10T19:28:16.100377"
     },
     {
       "test": "Multi-Sig Admin2 Signature & Execution",
       "success": true,
       "details": "Operation completed successfully - Status: KILL_TOKEN_DEPLOYED",
-      "timestamp": "2025-09-10T18:51:26.547520"
+      "timestamp": "2025-09-10T19:28:16.104974"
     },
     {
       "test": "Multi-Sig Operation Status",
       "success": true,
       "details": "Status retrieved - Completed: True, Signatures: 2/2",
-      "timestamp": "2025-09-10T18:51:26.550496"
+      "timestamp": "2025-09-10T19:28:16.107995"
     },
     {
       "test": "File Upload",
       "success": true,
       "details": "File uploaded: test_document.txt, Size: 59 bytes",
-      "timestamp": "2025-09-10T18:51:26.557561"
+      "timestamp": "2025-09-10T19:28:16.114763"
     },
     {
       "test": "File Download",
       "success": true,
       "details": "File downloaded successfully, 59 bytes",
-      "timestamp": "2025-09-10T18:51:26.561606"
+      "timestamp": "2025-09-10T19:28:16.117974"
     },
     {
       "test": "File List",
       "success": true,
       "details": "Listed 1 active files",
-      "timestamp": "2025-09-10T18:51:26.564500"
+      "timestamp": "2025-09-10T19:28:16.120902"
     },
     {
       "test": "File Deletion",
       "success": true,
       "details": "File permanently destroyed",
-      "timestamp": "2025-09-10T18:51:26.567147"
+      "timestamp": "2025-09-10T19:28:16.123771"
     },
     {
       "test": "File Cleanup",
       "success": true,
       "details": "Cleanup completed, 0 expired files removed",
-      "timestamp": "2025-09-10T18:51:26.569788"
+      "timestamp": "2025-09-10T19:28:16.126567"
     },
     {
       "test": "Voice Message Send",
       "success": true,
-      "details": "Voice message sent: ID=88ca8012..., Size=47 bytes",
-      "timestamp": "2025-09-10T18:51:26.574424"
+      "details": "Voice message sent: ID=0c39f1a3..., Size=47 bytes",
+      "timestamp": "2025-09-10T19:28:16.131791"
     },
     {
       "test": "Voice Message Play",
       "success": true,
       "details": "Voice message retrieved for playback: voice_message.m4a",
-      "timestamp": "2025-09-10T18:51:26.577347"
+      "timestamp": "2025-09-10T19:28:16.134663"
     },
     {
       "test": "Voice Message List",
       "success": true,
       "details": "Listed 1 active voice messages",
-      "timestamp": "2025-09-10T18:51:26.580070"
+      "timestamp": "2025-09-10T19:28:16.137504"
     },
     {
       "test": "Voice Message Delete",
       "success": true,
       "details": "Voice message deleted successfully",
-      "timestamp": "2025-09-10T18:51:26.582798"
+      "timestamp": "2025-09-10T19:28:16.140256"
     },
     {
       "test": "Voice Message Cleanup",
       "success": true,
       "details": "Cleanup completed, 0 expired messages removed",
-      "timestamp": "2025-09-10T18:51:26.585409"
+      "timestamp": "2025-09-10T19:28:16.142862"
     },
     {
       "test": "Input Sanitization",
       "success": true,
-      "details": "Blocked 6/7 malicious payloads",
-      "timestamp": "2025-09-10T18:51:26.598910"
+      "details": "Blocked 7/7 malicious payloads",
+      "timestamp": "2025-09-10T19:28:16.154807"
     },
     {
       "test": "Rate Limiting Enforcement",
       "success": true,
       "details": "Rate limiting triggered after rapid requests",
-      "timestamp": "2025-09-10T18:51:26.627210"
+      "timestamp": "2025-09-10T19:28:16.185013"
     }
   ]
 }

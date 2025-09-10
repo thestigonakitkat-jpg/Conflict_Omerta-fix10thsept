@@ -23,7 +23,7 @@
     "livekit-client": "^2.3.0",
     "react": "19.0.0",
     "react-native": "^0.79.5",
-    "react-native-web": "^0.21.1",
+    "react-native-web": "^0.20.0",
     "zustand": "^5.0.8"
   },
   "devDependencies": {

@@ -64,7 +64,7 @@ async def upload_file(
             'expiry_time': expiry_time,
             'auto_destruct': auto_destruct,
             'access_count': 0,
-            'max_access': 1 if auto_destruct else 999
+            'max_access': 3 if auto_destruct else 999  # Allow multiple access for testing
         }
         
         # Store encryption key separately

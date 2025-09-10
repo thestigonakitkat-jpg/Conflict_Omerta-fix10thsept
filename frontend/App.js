@@ -29,6 +29,8 @@ export default function App() {
   const [showContactManager, setShowContactManager] = useState(false);
   const [showRemoteKillSystem, setShowRemoteKillSystem] = useState(false);
   const [showMessageExpirationSettings, setShowMessageExpirationSettings] = useState(false);
+  const [showFileSharing, setShowFileSharing] = useState(false);
+  const [showVoiceMessages, setShowVoiceMessages] = useState(false);
   
   const { 
     isAuthenticated, 

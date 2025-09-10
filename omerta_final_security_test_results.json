@@ -1,0 +1,223 @@
+{
+  "summary": {
+    "total_tests": 31,
+    "expected_tests": 36,
+    "passed_tests": 4,
+    "failed_tests": 27,
+    "success_rate": 12.903225806451612,
+    "security_vulnerabilities": 8,
+    "timestamp": "2025-09-10T18:47:10.563167",
+    "test_categories": {
+      "basic_api": 1,
+      "secure_notes": 3,
+      "messaging_envelopes": 3,
+      "steelos_shredder": 3,
+      "contact_vault": 3,
+      "auto_wipe": 3,
+      "pin_security": 2,
+      "admin_multisig": 6,
+      "security_middleware": 4,
+      "rate_limiting": 2,
+      "file_sharing": 3,
+      "voice_messages": 3
+    }
+  },
+  "security_vulnerabilities": [
+    "PIN Security - Normal PIN",
+    "PIN Security - Panic PIN Detection",
+    "Security Middleware - SQL Injection Protection",
+    "Security Middleware - XSS Protection",
+    "Security Middleware - Command Injection Protection",
+    "Security Middleware - Legitimate Request Handling",
+    "Rate Limiting Enforcement",
+    "Rate Limiting Recovery"
+  ],
+  "detailed_results": [
+    {
+      "test": "Basic API Connectivity",
+      "success": true,
+      "details": "Root endpoint responding correctly",
+      "timestamp": "2025-09-10T18:47:08.454068"
+    },
+    {
+      "test": "Secure Notes Creation",
+      "success": true,
+      "details": "Note created: f5d0d3f5..., Views left: 1",
+      "timestamp": "2025-09-10T18:47:08.470017"
+    },
+    {
+      "test": "Secure Notes One-Time Read",
+      "success": true,
+      "details": "Note read successfully, purged after single read",
+      "timestamp": "2025-09-10T18:47:08.473485"
+    },
+    {
+      "test": "Secure Notes TTL Expiry",
+      "success": true,
+      "details": "Second read correctly returned 404 (note purged)",
+      "timestamp": "2025-09-10T18:47:08.476485"
+    },
+    {
+      "test": "Envelope Send",
+      "success": false,
+      "details": "HTTP 400",
+      "timestamp": "2025-09-10T18:47:08.478499"
+    },
+    {
+      "test": "Envelope Poll (First)",
+      "success": false,
+      "details": "HTTP 403",
+      "timestamp": "2025-09-10T18:47:08.480344"
+    },
+    {
+      "test": "Envelope Delete-on-Delivery",
+      "success": false,
+      "details": "HTTP 403",
+      "timestamp": "2025-09-10T18:47:08.482204"
+    },
+    {
+      "test": "STEELOS-Shredder Deployment",
+      "success": false,
+      "details": "HTTP 403",
+      "timestamp": "2025-09-10T18:47:08.484193"
+    },
+    {
+      "test": "STEELOS Kill Token Retrieval",
+      "success": false,
+      "details": "HTTP 403",
+      "timestamp": "2025-09-10T18:47:08.485944"
+    },
+    {
+      "test": "STEELOS One-Time Token Use",
+      "success": false,
+      "details": "HTTP 403",
+      "timestamp": "2025-09-10T18:47:08.487663"
+    },
+    {
+      "test": "Contact Vault Storage",
+      "success": false,
+      "details": "HTTP 403",
+      "timestamp": "2025-09-10T18:47:08.489403"
+    },
+    {
+      "test": "Contact Vault Retrieval",
+      "success": false,
+      "details": "HTTP 403",
+      "timestamp": "2025-09-10T18:47:08.491136"
+    },
+    {
+      "test": "Contact Vault Clear",
+      "success": false,
+      "details": "HTTP 403",
+      "timestamp": "2025-09-10T18:47:08.492810"
+    },
+    {
+      "test": "Auto-Wipe Configuration",
+      "success": false,
+      "details": "HTTP 403",
+      "timestamp": "2025-09-10T18:47:08.494482"
+    },
+    {
+      "test": "Auto-Wipe Activity Tracking",
+      "success": false,
+      "details": "HTTP 403",
+      "timestamp": "2025-09-10T18:47:08.496098"
+    },
+    {
+      "test": "Auto-Wipe Status Check",
+      "success": false,
+      "details": "HTTP 403",
+      "timestamp": "2025-09-10T18:47:08.497787"
+    },
+    {
+      "test": "PIN Security - Normal PIN",
+      "success": false,
+      "details": "HTTP 403",
+      "timestamp": "2025-09-10T18:47:08.499497"
+    },
+    {
+      "test": "PIN Security - Panic PIN Detection",
+      "success": false,
+      "details": "HTTP 403",
+      "timestamp": "2025-09-10T18:47:08.501108"
+    },
+    {
+      "test": "Admin Authentication",
+      "success": false,
+      "details": "HTTP 403",
+      "timestamp": "2025-09-10T18:47:08.502796"
+    },
+    {
+      "test": "Security Middleware - SQL Injection Protection",
+      "success": false,
+      "details": "Only blocked 0/4 SQL injection attempts",
+      "timestamp": "2025-09-10T18:47:08.508991"
+    },
+    {
+      "test": "Security Middleware - XSS Protection",
+      "success": false,
+      "details": "Only blocked 0/4 XSS attempts",
+      "timestamp": "2025-09-10T18:47:08.515281"
+    },
+    {
+      "test": "Security Middleware - Command Injection Protection",
+      "success": false,
+      "details": "Only blocked 0/4 command injection attempts",
+      "timestamp": "2025-09-10T18:47:08.521904"
+    },
+    {
+      "test": "Security Middleware - Legitimate Request Handling",
+      "success": false,
+      "details": "Only allowed 0/3 legitimate requests",
+      "timestamp": "2025-09-10T18:47:08.527084"
+    },
+    {
+      "test": "Rate Limiting Enforcement",
+      "success": false,
+      "details": "Rate limiting not enforced - 0 requests succeeded",
+      "timestamp": "2025-09-10T18:47:08.551727"
+    },
+    {
+      "test": "Rate Limiting Recovery",
+      "success": false,
+      "details": "Rate limit not recovered: HTTP 403",
+      "timestamp": "2025-09-10T18:47:10.554255"
+    },
+    {
+      "test": "File Upload",
+      "success": false,
+      "details": "HTTP 403",
+      "timestamp": "2025-09-10T18:47:10.556218"
+    },
+    {
+      "test": "File Download",
+      "success": false,
+      "details": "Error: argument of type 'NoneType' is not iterable",
+      "timestamp": "2025-09-10T18:47:10.556254"
+    },
+    {
+      "test": "File Cleanup",
+      "success": false,
+      "details": "HTTP 403",
+      "timestamp": "2025-09-10T18:47:10.557959"
+    },
+    {
+      "test": "Voice Message Send",
+      "success": false,
+      "details": "HTTP 403",
+      "timestamp": "2025-09-10T18:47:10.559679"
+    },
+    {
+      "test": "Voice Message Play",
+      "success": false,
+      "details": "HTTP 403",
+      "timestamp": "2025-09-10T18:47:10.561283"
+    },
+    {
+      "test": "Voice Message Cleanup",
+      "success": false,
+      "details": "HTTP 403",
+      "timestamp": "2025-09-10T18:47:10.562846"
+    }
+  ]
+}

@@ -1026,7 +1026,12 @@ class BrutalSecurityAuditor:
 
 if __name__ == "__main__":
     auditor = BrutalSecurityAuditor()
-    success_rate = auditor.run_comprehensive_security_audit()
-    
-    # Exit with appropriate code
-    sys.exit(0 if success_rate >= 80 else 1)
+    try:
+        success_rate = auditor.run_comprehensive_security_audit()
+        if success_rate is None:
+            success_rate = 0
+        # Exit with appropriate code
+        sys.exit(0 if success_rate >= 80 else 1)
+    except Exception as e:
+        print(f"❌ CRITICAL ERROR: {str(e)}")
+        sys.exit(1)

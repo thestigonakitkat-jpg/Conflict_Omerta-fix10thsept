@@ -1,5 +1,5 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException, Form
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, Response
 import os
 import uuid
 import time
@@ -8,6 +8,7 @@ from typing import Optional
 import aiofiles
 from cryptography.fernet import Fernet
 import base64
+from security_middleware import FileUploadSecurityValidator
 
 router = APIRouter()
 

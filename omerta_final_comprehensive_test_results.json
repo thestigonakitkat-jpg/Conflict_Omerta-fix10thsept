@@ -1,0 +1,257 @@
+{
+  "summary": {
+    "total_tests": 32,
+    "passed_tests": 24,
+    "failed_tests": 8,
+    "success_rate": 75.0,
+    "critical_failures": 5,
+    "timestamp": "2025-09-10T19:19:11.587183",
+    "test_objective": "100% perfect scores across ALL systems",
+    "systems_tested": [
+      "Basic API",
+      "Secure Notes",
+      "STEELOS-Shredder",
+      "Contact Vault",
+      "PIN Security",
+      "Admin Multi-Sig",
+      "File Sharing",
+      "Voice Messages",
+      "Security Protections",
+      "Messaging Envelopes",
+      "Auto-Wipe"
+    ]
+  },
+  "detailed_results": [
+    {
+      "test": "Basic API Connectivity",
+      "success": true,
+      "details": "Root endpoint responding correctly",
+      "critical": false,
+      "timestamp": "2025-09-10T19:19:11.176895"
+    },
+    {
+      "test": "Secure Notes Creation",
+      "success": true,
+      "details": "Note created: 907e6f04..., Views left: 1",
+      "critical": false,
+      "timestamp": "2025-09-10T19:19:11.195130"
+    },
+    {
+      "test": "Secure Notes One-Time Read",
+      "success": true,
+      "details": "Note read successfully, purged after single read",
+      "critical": false,
+      "timestamp": "2025-09-10T19:19:11.198586"
+    },
+    {
+      "test": "Secure Notes TTL Expiry",
+      "success": true,
+      "details": "Second read correctly returned 404 (note purged)",
+      "critical": false,
+      "timestamp": "2025-09-10T19:19:11.201527"
+    },
+    {
+      "test": "STEELOS-Shredder Deployment",
+      "success": true,
+      "details": "CYANIDE TABLET deployed, kill token generated",
+      "critical": false,
+      "timestamp": "2025-09-10T19:19:11.206154"
+    },
+    {
+      "test": "STEELOS Kill Token Retrieval",
+      "success": true,
+      "details": "Kill token retrieved with valid signature (64 chars)",
+      "critical": false,
+      "timestamp": "2025-09-10T19:19:11.210058"
+    },
+    {
+      "test": "STEELOS One-Time Token Use",
+      "success": true,
+      "details": "Token consumed after first retrieval (one-time use verified)",
+      "critical": false,
+      "timestamp": "2025-09-10T19:19:11.214732"
+    },
+    {
+      "test": "Contact Vault Storage",
+      "success": true,
+      "details": "Stored 2 contacts, backup ID: contacts...",
+      "critical": false,
+      "timestamp": "2025-09-10T19:19:11.219689"
+    },
+    {
+      "test": "Contact Vault Retrieval",
+      "success": true,
+      "details": "Retrieved 2 contacts successfully",
+      "critical": false,
+      "timestamp": "2025-09-10T19:19:11.224256"
+    },
+    {
+      "test": "Contact Vault Clear",
+      "success": true,
+      "details": "Vault cleared successfully",
+      "critical": false,
+      "timestamp": "2025-09-10T19:19:11.226983"
+    },
+    {
+      "test": "PIN Security - Normal PIN",
+      "success": true,
+      "details": "Normal PIN verification working",
+      "critical": false,
+      "timestamp": "2025-09-10T19:19:11.375515"
+    },
+    {
+      "test": "PIN Security - Panic PIN Detection",
+      "success": true,
+      "details": "Panic PIN detected, signed kill token generated",
+      "critical": false,
+      "timestamp": "2025-09-10T19:19:11.489956"
+    },
+    {
+      "test": "Admin Authentication",
+      "success": false,
+      "details": "HTTP 400",
+      "critical": true,
+      "timestamp": "2025-09-10T19:19:11.492100"
+    },
+    {
+      "test": "File Upload",
+      "success": false,
+      "details": "HTTP 400",
+      "critical": true,
+      "timestamp": "2025-09-10T19:19:11.494097"
+    },
+    {
+      "test": "File Download",
+      "success": false,
+      "details": "Error: argument of type 'NoneType' is not iterable",
+      "critical": true,
+      "timestamp": "2025-09-10T19:19:11.494115"
+    },
+    {
+      "test": "File List",
+      "success": true,
+      "details": "Listed 0 active files",
+      "critical": false,
+      "timestamp": "2025-09-10T19:19:11.496827"
+    },
+    {
+      "test": "File Deletion",
+      "success": false,
+      "details": "HTTP 404",
+      "critical": false,
+      "timestamp": "2025-09-10T19:19:11.499963"
+    },
+    {
+      "test": "File Cleanup",
+      "success": true,
+      "details": "Cleanup completed, 0 expired files removed",
+      "critical": false,
+      "timestamp": "2025-09-10T19:19:11.502602"
+    },
+    {
+      "test": "Voice Message Send",
+      "success": false,
+      "details": "HTTP 400",
+      "critical": true,
+      "timestamp": "2025-09-10T19:19:11.504609"
+    },
+    {
+      "test": "Voice Message Play",
+      "success": false,
+      "details": "HTTP 404",
+      "critical": true,
+      "timestamp": "2025-09-10T19:19:11.507312"
+    },
+    {
+      "test": "Voice Message List",
+      "success": true,
+      "details": "Listed 0 active voice messages",
+      "critical": false,
+      "timestamp": "2025-09-10T19:19:11.509914"
+    },
+    {
+      "test": "Voice Message Delete",
+      "success": false,
+      "details": "HTTP 404",
+      "critical": false,
+      "timestamp": "2025-09-10T19:19:11.512601"
+    },
+    {
+      "test": "Voice Message Cleanup",
+      "success": true,
+      "details": "Cleanup completed, 0 expired messages removed",
+      "critical": false,
+      "timestamp": "2025-09-10T19:19:11.515663"
+    },
+    {
+      "test": "Input Sanitization - 100% Blocking",
+      "success": true,
+      "details": "Blocked 10/10 malicious payloads (100%)",
+      "critical": false,
+      "timestamp": "2025-09-10T19:19:11.533622"
+    },
+    {
+      "test": "Rate Limiting Enforcement",
+      "success": true,
+      "details": "Rate limiting triggered after 9 requests",
+      "critical": false,
+      "timestamp": "2025-09-10T19:19:11.565692"
+    },
+    {
+      "test": "CSRF Protection",
+      "success": true,
+      "details": "CSRF token generated, expires in 3600 seconds",
+      "critical": false,
+      "timestamp": "2025-09-10T19:19:11.568316"
+    },
+    {
+      "test": "Envelope Send",
+      "success": true,
+      "details": "Envelope sent with ID: d2fe6096...",
+      "critical": false,
+      "timestamp": "2025-09-10T19:19:11.572068"
+    },
+    {
+      "test": "Envelope Poll (First)",
+      "success": true,
+      "details": "Message delivered: ID=d2fe6096..., From=user_sender_final",
+      "critical": false,
+      "timestamp": "2025-09-10T19:19:11.574858"
+    },
+    {
+      "test": "Envelope Delete-on-Delivery",
+      "success": true,
+      "details": "Second poll returned empty (delete-on-delivery working)",
+      "critical": false,
+      "timestamp": "2025-09-10T19:19:11.577387"
+    },
+    {
+      "test": "Auto-Wipe Configuration",
+      "success": true,
+      "details": "Configured 7-day auto-wipe for device",
+      "critical": false,
+      "timestamp": "2025-09-10T19:19:11.580748"
+    },
+    {
+      "test": "Auto-Wipe Activity Tracking",
+      "success": true,
+      "details": "Activity timestamp updated",
+      "critical": false,
+      "timestamp": "2025-09-10T19:19:11.584085"
+    },
+    {
+      "test": "Auto-Wipe Status Check",
+      "success": false,
+      "details": "Status check failed: {'success': True, 'wipe_pending': False, 'warning_active': False, 'days_until_wipe': 7, 'last_activity': 0, 'wipe_type': 'app_data', 'status': {'device_id': 'test_device_autowipe_final', 'enabled': True, 'days_inactive': 7, 'wipe_type': 'app_data', 'last_activity': 1757531951, 'days_until_wipe': 7, 'warning_active': False, 'wipe_pending': False}, 'message': 'Auto-wipe status checked'}",
+      "critical": false,
+      "timestamp": "2025-09-10T19:19:11.586884"
+    }
+  ],
+  "critical_failures": [
+    "Admin Authentication",
+    "File Upload",
+    "File Download",
+    "Voice Message Send",
+    "Voice Message Play"
+  ]
+}

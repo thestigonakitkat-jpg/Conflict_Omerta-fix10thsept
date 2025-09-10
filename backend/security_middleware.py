@@ -282,23 +282,114 @@ class SecurityMiddleware(BaseHTTPMiddleware):
         return False
 
     def detect_command_injection(self, data: str) -> bool:
-        """Detect command injection attempts - refined for legitimate content"""
+        """Detect command injection attempts - COMPREHENSIVE blocking"""
         if not data:
             return False
         
-        # Allow base64 encoded content
+        # Allow base64 encoded content (but check decoded content too)
         if self.is_likely_base64(data):
-            return False
+            try:
+                import base64
+                decoded = base64.b64decode(data).decode('utf-8', errors='ignore')
+                # Check decoded content for command injection
+                if self._check_command_patterns(decoded):
+                    return True
+            except:
+                pass  # Not valid base64, continue with regular checks
         
-        # Only flag clear command injection attempts
-        command_patterns = [
-            '; rm -rf', '| nc ', '$(whoami)', '`id`', '/etc/passwd',
-            '&& wget', 'bash -c', 'cmd /c'
-        ]
+        return self._check_command_patterns(data)
+    
+    def _check_command_patterns(self, data: str) -> bool:
+        """Comprehensive command injection pattern checking"""
+        # Command separators and operators
+        separators = [';', '|', '&', '&&', '||', '\n', '\r']
+        for sep in separators:
+            if sep in data:
+                # Check if followed by suspicious commands
+                parts = data.split(sep)
+                for part in parts[1:]:  # Check parts after separator
+                    part = part.strip().lower()
+                    if self._is_suspicious_command(part):
+                        return True
         
-        for pattern in command_patterns:
+        # Command substitution patterns
+        substitution_patterns = ['$(', '${', '`']
+        for pattern in substitution_patterns:
             if pattern in data:
                 return True
+        
+        # Dangerous file paths
+        dangerous_paths = [
+            '/etc/passwd', '/etc/shadow', '/etc/hosts', '/etc/group',
+            '/var/log/', '/var/www/', '/usr/bin/', '/bin/', '/sbin/',
+            '/tmp/', '/home/', '/root/', '~/', '../', './',
+            'c:\\windows\\', 'c:\\users\\', '%systemroot%', '$home'
+        ]
+        
+        data_lower = data.lower()
+        for path in dangerous_paths:
+            if path in data_lower:
+                return True
+        
+        # Direct command execution attempts
+        direct_commands = [
+            'rm -rf', 'del /f', 'format c:', 'fdisk', 'mkfs',
+            'wget ', 'curl ', 'nc ', 'netcat', 'telnet',
+            'ssh ', 'ftp ', 'tftp', 'scp ', 'rsync',
+            'python -c', 'perl -e', 'ruby -e', 'php -r',
+            'bash -c', 'sh -c', 'cmd /c', 'powershell',
+            'eval(', 'exec(', 'system(', 'shell_exec(',
+            'passthru(', 'popen(', 'proc_open('
+        ]
+        
+        for cmd in direct_commands:
+            if cmd in data_lower:
+                return True
+        
+        # Encoding-based evasion attempts
+        if self._check_encoded_commands(data):
+            return True
+        
+        return False
+    
+    def _is_suspicious_command(self, command: str) -> bool:
+        """Check if a command is suspicious"""
+        suspicious_commands = [
+            'rm', 'del', 'format', 'fdisk', 'mkfs', 'dd',
+            'wget', 'curl', 'nc', 'netcat', 'telnet', 'ssh',
+            'cat', 'type', 'more', 'less', 'head', 'tail',
+            'grep', 'find', 'locate', 'which', 'whereis',
+            'ps', 'top', 'kill', 'killall', 'pkill',
+            'mount', 'umount', 'chmod', 'chown', 'chgrp',
+            'su', 'sudo', 'passwd', 'useradd', 'userdel',
+            'crontab', 'at', 'batch', 'nohup',
+            'python', 'perl', 'ruby', 'php', 'node',
+            'bash', 'sh', 'zsh', 'fish', 'cmd', 'powershell'
+        ]
+        
+        # Check if command starts with any suspicious command
+        for sus_cmd in suspicious_commands:
+            if command.startswith(sus_cmd):
+                return True
+        
+        return False
+    
+    def _check_encoded_commands(self, data: str) -> bool:
+        """Check for encoded command injection attempts"""
+        # URL encoding
+        url_encoded_patterns = ['%2f', '%5c', '%3b', '%7c', '%26']
+        for pattern in url_encoded_patterns:
+            if pattern in data.lower():
+                return True
+        
+        # Hex encoding
+        if '\\x' in data and any(c in data.lower() for c in ['2f', '5c', '3b', '7c', '26']):
+            return True
+        
+        # Unicode encoding
+        if '\\u' in data:
+            return True
+        
         return False
 
     def is_likely_base64(self, data: str) -> bool:

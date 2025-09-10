@@ -95,6 +95,12 @@ class GraphiteDefenseSystem:
         # Redis for real-time data storage
         self.redis_client = redis.Redis(host='localhost', port=6379, db=2, decode_responses=True)
         
+        # NSA SIGNATURE EVASION DETECTION - Enhanced tracking
+        self.device_patterns = {}  # Track device behavior patterns
+        self.request_patterns = {}  # Track request timing patterns
+        self.evasion_counters = {}  # Count evasion attempts per device
+        self.adaptive_thresholds = {}  # Device-specific adaptive thresholds
+        
         # Known Graphite behavioral signatures
         self.graphite_signatures = [
             GraphiteSignature(

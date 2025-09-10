@@ -174,26 +174,89 @@ class SecurityMiddleware(BaseHTTPMiddleware):
             return ""
 
     def detect_sql_injection(self, data: str) -> bool:
-        """Detect SQL injection attempts - refined for legitimate encrypted content"""
+        """Detect SQL injection attempts - COMPREHENSIVE blocking"""
         if not data:
             return False
         
         data_lower = data.lower()
         
-        # Only flag if multiple indicators present (reduce false positives)
-        dangerous_keywords = [
-            'union select', 'drop table', 'delete from', 'insert into',
-            'exec sp_', 'waitfor delay', 'information_schema', 'sysobjects'
+        # Allow base64 encoded content (but check decoded content too)
+        if self.is_likely_base64(data):
+            try:
+                import base64
+                decoded = base64.b64decode(data).decode('utf-8', errors='ignore').lower()
+                # Check decoded content for SQL injection
+                if self._check_sql_patterns(decoded):
+                    return True
+            except:
+                pass  # Not valid base64, continue with regular checks
+        
+        return self._check_sql_patterns(data_lower)
+    
+    def _check_sql_patterns(self, data_lower: str) -> bool:
+        """Comprehensive SQL injection pattern checking"""
+        # Comprehensive SQL injection patterns
+        sql_patterns = [
+            # Union-based attacks
+            'union select', 'union all select', 'union distinct select',
+            # Boolean-based attacks  
+            'or 1=1', 'or 1 = 1', 'or true', 'or 1', 'and 1=1', 'and 1 = 1',
+            # Time-based attacks
+            'waitfor delay', 'sleep(', 'benchmark(', 'pg_sleep(',
+            # Comment-based attacks
+            '--', '/*', '*/', '#',
+            # Information gathering
+            'information_schema', 'sysobjects', 'sys.tables', 'sys.columns',
+            'table_name', 'column_name', 'database()', 'version()',
+            # Command execution
+            'exec sp_', 'xp_cmdshell', 'sp_execute',
+            # Data modification
+            'drop table', 'delete from', 'truncate table', 'alter table',
+            'insert into', 'update set', 'create table', 'create user',
+            # Advanced techniques
+            'load_file(', 'into outfile', 'into dumpfile',
+            'char(', 'ascii(', 'substring(', 'mid(', 'concat(',
+            # Error-based injection
+            'extractvalue(', 'updatexml(', 'exp(~(select',
+            # Blind injection indicators
+            'if(', 'case when', 'length(', 'count(*)',
+            # Postgres specific
+            'pg_user', 'pg_database', 'current_user', 'current_database',
+            # MSSQL specific
+            'sp_password', 'sp_helpdb', 'master..xp_', 'sys.databases',
+            # MySQL specific
+            'mysql.user', 'load data infile', 'select user()',
+            # Oracle specific
+            'sys.dba_users', 'all_tables', 'user_tables'
         ]
         
-        # Allow base64 encoded content (common in encrypted messages)
-        if self.is_likely_base64(data):
-            return False
-        
-        # Only flag if exact dangerous patterns found
-        for keyword in dangerous_keywords:
-            if keyword in data_lower:
+        # Check each pattern
+        for pattern in sql_patterns:
+            if pattern in data_lower:
                 return True
+        
+        # Additional checks for obfuscated attacks
+        if self._check_obfuscated_sql(data_lower):
+            return True
+            
+        return False
+    
+    def _check_obfuscated_sql(self, data: str) -> bool:
+        """Check for obfuscated SQL injection attempts"""
+        # Hex encoding checks
+        if '0x' in data and any(c in data for c in ['select', 'union', 'drop']):
+            return True
+        
+        # Multiple single quotes (potential string escape)
+        if data.count("'") >= 3:
+            return True
+            
+        # SQL operators with suspicious context
+        operators = ['=', '<', '>', '<=', '>=', '<>', '!=']
+        for op in operators:
+            if f"' {op}" in data or f"{op} '" in data:
+                return True
+        
         return False
 
     def detect_xss_attempt(self, data: str) -> bool:

@@ -53,7 +53,7 @@ class SecurityMiddleware(BaseHTTPMiddleware):
         
         # Command injection patterns
         self.command_patterns = [
-            r"(\||&|;|`|\$\(|\${)",
+            r"(\||&|;|`|\$\(|\$\{)",
             r"(\\x[0-9a-fA-F]{2})",
             r"(%[0-9a-fA-F]{2})",
             r"(\.\./|\.\.\\\)",

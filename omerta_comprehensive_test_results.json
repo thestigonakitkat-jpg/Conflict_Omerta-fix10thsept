@@ -1,10 +1,10 @@
 {
   "summary": {
     "total_tests": 32,
-    "passed_tests": 21,
-    "failed_tests": 11,
-    "success_rate": 65.625,
-    "timestamp": "2025-09-10T13:18:09.897370",
+    "passed_tests": 22,
+    "failed_tests": 10,
+    "success_rate": 68.75,
+    "timestamp": "2025-09-10T13:19:36.279353",
     "test_type": "comprehensive_final_review"
   },
   "detailed_results": [
@@ -12,193 +12,193 @@
       "test": "Basic API Connectivity",
       "success": true,
       "details": "Root endpoint responding correctly",
-      "timestamp": "2025-09-10T13:18:09.575394"
+      "timestamp": "2025-09-10T13:19:35.941148"
     },
     {
       "test": "Secure Notes Creation",
       "success": true,
-      "details": "Note created: 1fc95550..., Views left: 1",
-      "timestamp": "2025-09-10T13:18:09.578411"
+      "details": "Note created: fc524b1c..., Views left: 1",
+      "timestamp": "2025-09-10T13:19:35.944389"
     },
     {
       "test": "Secure Notes One-Time Read",
       "success": true,
       "details": "Note read successfully, purged after single read",
-      "timestamp": "2025-09-10T13:18:09.580784"
+      "timestamp": "2025-09-10T13:19:35.946946"
     },
     {
       "test": "Secure Notes Purge Verification",
       "success": true,
       "details": "Note properly purged after one-time read",
-      "timestamp": "2025-09-10T13:18:09.582992"
+      "timestamp": "2025-09-10T13:19:35.949299"
     },
     {
       "test": "STEELOS-Shredder Deployment",
       "success": true,
       "details": "CYANIDE TABLET deployed, kill token generated",
-      "timestamp": "2025-09-10T13:18:09.585589"
+      "timestamp": "2025-09-10T13:19:35.951972"
     },
     {
       "test": "STEELOS Kill Token Retrieval",
       "success": true,
       "details": "Kill token retrieved with valid HMAC-SHA256 signature (64 chars)",
-      "timestamp": "2025-09-10T13:18:09.588147"
+      "timestamp": "2025-09-10T13:19:35.954285"
     },
     {
       "test": "STEELOS One-Time Token Use",
       "success": true,
       "details": "Token consumed after first retrieval (one-time use verified)",
-      "timestamp": "2025-09-10T13:18:09.590271"
+      "timestamp": "2025-09-10T13:19:35.956438"
     },
     {
       "test": "Contact Vault Storage",
       "success": true,
       "details": "Contacts stored successfully, backup ID: contacts...",
-      "timestamp": "2025-09-10T13:18:09.592899"
+      "timestamp": "2025-09-10T13:19:35.959351"
     },
     {
       "test": "Contact Vault Retrieval",
       "success": true,
       "details": "Retrieved 2 contacts successfully",
-      "timestamp": "2025-09-10T13:18:09.596571"
+      "timestamp": "2025-09-10T13:19:35.963065"
     },
     {
       "test": "Contact Vault Clear",
       "success": true,
       "details": "Vault cleared successfully",
-      "timestamp": "2025-09-10T13:18:09.598639"
+      "timestamp": "2025-09-10T13:19:35.965101"
     },
     {
       "test": "PIN Security - Normal PIN",
       "success": true,
       "details": "Normal PIN (123456) verification working",
-      "timestamp": "2025-09-10T13:18:09.725872"
+      "timestamp": "2025-09-10T13:19:36.069646"
     },
     {
       "test": "PIN Security - Panic PIN Detection",
       "success": true,
       "details": "Panic PIN (000000) detected, signed kill token generated",
-      "timestamp": "2025-09-10T13:18:09.832777"
+      "timestamp": "2025-09-10T13:19:36.212984"
     },
     {
       "test": "Admin Authentication",
       "success": true,
-      "details": "Admin admin_9731931b authenticated successfully",
-      "timestamp": "2025-09-10T13:18:09.836295"
+      "details": "Admin admin_6b4229f7 authenticated successfully",
+      "timestamp": "2025-09-10T13:19:36.216443"
     },
     {
       "test": "Admin Seed Info Retrieval",
       "success": true,
       "details": "BIP39 seed split: Admin1(6 words), Admin2(6 words)",
-      "timestamp": "2025-09-10T13:18:09.838796"
+      "timestamp": "2025-09-10T13:19:36.218951"
     },
     {
       "test": "Multi-Sig Operation Initiation",
       "success": true,
-      "details": "Operation admin_op_1757510289_806bfa8cefa0178e created, expires in 5 minutes",
-      "timestamp": "2025-09-10T13:18:09.841531"
+      "details": "Operation admin_op_1757510376_8542d9199954c72c created, expires in 5 minutes",
+      "timestamp": "2025-09-10T13:19:36.221597"
     },
     {
       "test": "Multi-Sig Admin1 Signature",
       "success": true,
       "details": "Admin1 signed successfully (1/2 signatures)",
-      "timestamp": "2025-09-10T13:18:09.844080"
+      "timestamp": "2025-09-10T13:19:36.224158"
     },
     {
       "test": "Multi-Sig Operation Completion",
       "success": true,
       "details": "Operation completed successfully - Status: KILL_TOKEN_DEPLOYED",
-      "timestamp": "2025-09-10T13:18:09.847079"
+      "timestamp": "2025-09-10T13:19:36.226943"
     },
     {
       "test": "Input Sanitization",
       "success": true,
       "details": "Blocked 6/7 malicious payloads",
-      "timestamp": "2025-09-10T13:18:09.862002"
+      "timestamp": "2025-09-10T13:19:36.241926"
     },
     {
       "test": "Rate Limiting Enforcement",
       "success": true,
       "details": "Rate limiting triggered after rapid requests",
-      "timestamp": "2025-09-10T13:18:09.868779"
+      "timestamp": "2025-09-10T13:19:36.248754"
     },
     {
       "test": "Graphite Defense Status",
-      "success": false,
-      "details": "System not operational: {'system_status': 'ERROR', 'error': 'Error 99 connecting to localhost:6379. Cannot assign requested address.', 'version': '1.0.0'}",
-      "timestamp": "2025-09-10T13:18:09.871114"
+      "success": true,
+      "details": "System operational with 5 signatures",
+      "timestamp": "2025-09-10T13:19:36.251596"
     },
     {
       "test": "Graphite Signatures Database",
       "success": true,
       "details": "Retrieved 5 Graphite behavioral signatures",
-      "timestamp": "2025-09-10T13:18:09.873231"
+      "timestamp": "2025-09-10T13:19:36.253750"
     },
     {
       "test": "Graphite Threat Analysis",
       "success": true,
       "details": "Analysis complete - Level: 0, Confidence: 0.0%",
-      "timestamp": "2025-09-10T13:18:09.876641"
+      "timestamp": "2025-09-10T13:19:36.258054"
     },
     {
       "test": "File Upload",
       "success": false,
       "details": "HTTP 422",
-      "timestamp": "2025-09-10T13:18:09.878859"
+      "timestamp": "2025-09-10T13:19:36.260381"
     },
     {
       "test": "File List",
       "success": false,
       "details": "List failed: {'files': [], 'total_active': 0, 'total_expired_cleaned': 0}",
-      "timestamp": "2025-09-10T13:18:09.880835"
+      "timestamp": "2025-09-10T13:19:36.262469"
     },
     {
       "test": "File Download",
       "success": false,
       "details": "HTTP 422",
-      "timestamp": "2025-09-10T13:18:09.882870"
+      "timestamp": "2025-09-10T13:19:36.264547"
     },
     {
       "test": "File Deletion",
       "success": false,
       "details": "HTTP 404",
-      "timestamp": "2025-09-10T13:18:09.884876"
+      "timestamp": "2025-09-10T13:19:36.266589"
     },
     {
       "test": "File Cleanup",
       "success": false,
       "details": "Cleanup failed: {'message': 'Cleanup completed', 'expired_files_removed': 0, 'active_files_remaining': 0}",
-      "timestamp": "2025-09-10T13:18:09.886879"
+      "timestamp": "2025-09-10T13:19:36.268699"
     },
     {
       "test": "Voice Message Send",
       "success": false,
       "details": "HTTP 422",
-      "timestamp": "2025-09-10T13:18:09.888968"
+      "timestamp": "2025-09-10T13:19:36.270935"
     },
     {
       "test": "Voice Messages List",
       "success": false,
       "details": "List failed: {'messages': [], 'total_active': 0, 'expired_cleaned': 0}",
-      "timestamp": "2025-09-10T13:18:09.891201"
+      "timestamp": "2025-09-10T13:19:36.272994"
     },
     {
       "test": "Voice Message Play",
       "success": false,
       "details": "HTTP 404",
-      "timestamp": "2025-09-10T13:18:09.893166"
+      "timestamp": "2025-09-10T13:19:36.275073"
     },
     {
       "test": "Voice Message Deletion",
       "success": false,
       "details": "HTTP 404",
-      "timestamp": "2025-09-10T13:18:09.895155"
+      "timestamp": "2025-09-10T13:19:36.277113"
     },
     {
       "test": "Voice Message Cleanup",
       "success": false,
       "details": "Cleanup failed: {'message': 'Voice cleanup completed', 'expired_messages_removed': 0, 'active_messages_remaining': 0}",
-      "timestamp": "2025-09-10T13:18:09.897185"
+      "timestamp": "2025-09-10T13:19:36.279152"
     }
   ]
 }

@@ -904,7 +904,7 @@ class BrutalSecurityAuditor:
         self.test_command_injection()
         
         # Generate brutal assessment
-        self.generate_brutal_assessment()
+        return self.generate_brutal_assessment()
 
     def generate_brutal_assessment(self):
         """Generate brutal honest security assessment"""

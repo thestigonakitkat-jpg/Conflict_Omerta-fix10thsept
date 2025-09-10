@@ -12,6 +12,7 @@ import json
 import time
 import hashlib
 import secrets
+import base64
 from typing import Dict, List, Any
 import bleach
 from collections import defaultdict

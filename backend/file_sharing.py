@@ -45,9 +45,6 @@ async def upload_file(
         # Generate unique file ID
         file_id = str(uuid.uuid4())
         
-        # Read file content
-        content = await file.read()
-        
         # Generate encryption key
         encryption_key = generate_encryption_key()
         

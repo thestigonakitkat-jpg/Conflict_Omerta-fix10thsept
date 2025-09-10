@@ -38,6 +38,10 @@ async def upload_file(
 ):
     """Upload and encrypt a file"""
     try:
+        # SECURITY VALIDATION - Critical for state-level protection
+        content = await file.read()
+        FileUploadSecurityValidator.validate_file(file.filename, content)
+        
         # Generate unique file ID
         file_id = str(uuid.uuid4())
         

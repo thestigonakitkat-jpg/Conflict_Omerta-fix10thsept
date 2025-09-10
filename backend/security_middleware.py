@@ -136,27 +136,55 @@ class SecurityMiddleware(BaseHTTPMiddleware):
         return response
 
     def get_real_ip(self, request: Request) -> str:
-        """Get real client IP, ignoring spoofed headers"""
-        # Don't trust X-Forwarded-For, X-Real-IP etc. as they can be spoofed
-        # Use the actual connection IP
-        return request.client.host if request.client else "unknown"
-
-    def check_rate_limit(self, ip: str, endpoint: str) -> bool:
-        """Rate limiting that cannot be bypassed"""
-        current_time = time.time()
-        key = f"{ip}:{endpoint}"
+        """Get real client IP, CANNOT BE SPOOFED - enhanced security"""
+        # Use actual connection IP only - ignore ALL headers that can be spoofed
+        real_ip = request.client.host if request.client else "unknown"
         
-        # Clean old entries
-        self.rate_limits[key] = [
-            timestamp for timestamp in self.rate_limits[key] 
-            if current_time - timestamp < 60  # 1 minute window
+        # Additional validation - block known proxy/VPN headers to prevent bypass
+        suspicious_headers = [
+            'x-forwarded-for', 'x-real-ip', 'x-client-ip', 'x-cluster-client-ip',
+            'forwarded', 'cf-connecting-ip', 'true-client-ip', 'x-originating-ip'
         ]
         
-        # Check limit (100 requests per minute for testing)
-        if len(self.rate_limits[key]) >= 100:
+        # Log and flag attempts to use spoofing headers
+        for header in suspicious_headers:
+            if header in [h.lower() for h in request.headers.keys()]:
+                print(f"Security Alert: Client {real_ip} attempted IP spoofing with header: {header}")
+                # Could be an attack attempt
+                self.blocked_ips.add(real_ip)
+        
+        return real_ip
+
+    def check_rate_limit(self, ip: str, endpoint: str) -> bool:
+        """Rate limiting that CANNOT be bypassed - enhanced security"""
+        current_time = time.time()
+        
+        # Multiple rate limiting tiers for different attack patterns
+        # Tier 1: Per-endpoint limiting
+        endpoint_key = f"{ip}:{endpoint}"
+        
+        # Tier 2: Global IP limiting (prevents endpoint hopping)
+        global_key = f"{ip}:global"
+        
+        # Clean old entries for both tiers
+        for key in [endpoint_key, global_key]:
+            self.rate_limits[key] = [
+                timestamp for timestamp in self.rate_limits[key] 
+                if current_time - timestamp < 60  # 1 minute window
+            ]
+        
+        # Check endpoint-specific limit (20 requests per minute per endpoint)
+        if len(self.rate_limits[endpoint_key]) >= 20:
             return False
         
-        self.rate_limits[key].append(current_time)
+        # Check global limit (50 requests per minute total)
+        if len(self.rate_limits[global_key]) >= 50:
+            return False
+        
+        # Add to both rate limit trackers
+        self.rate_limits[endpoint_key].append(current_time)
+        self.rate_limits[global_key].append(current_time)
+        
         return True
 
     async def get_request_body(self, request: Request) -> str:

@@ -26,18 +26,7 @@ export default function App() {
   const [rebootWarning, setRebootWarning] = useState(false);
   const [showContactManager, setShowContactManager] = useState(false);
   const [showRemoteKillSystem, setShowRemoteKillSystem] = useState(false);
-  const [messageExpiryEnabled, setMessageExpiryEnabled] = useState(true);
-  const [customExpiryMinutes, setCustomExpiryMinutes] = useState(null);
-  const [clipboardRestricted, setClipboardRestricted] = useState(false);
   const [showMessageExpirationSettings, setShowMessageExpirationSettings] = useState(false);
-  const [showVaultSetup, setShowVaultSetup] = useState(false);
-  const [showVaultUnlock, setShowVaultUnlock] = useState(false);
-  const [vaultConfigured, setVaultConfigured] = useState(false);
-  const [vaultUnlocked, setVaultUnlocked] = useState(false);
-  const [fakeDialMode, setFakeDialMode] = useState(false);
-  const [showVideoCall, setShowVideoCall] = useState(false);
-  const [videoCallConfig, setVideoCallConfig] = useState(null);
-  const [showGroupChatManager, setShowGroupChatManager] = useState(false);
   
   const { 
     isAuthenticated, 

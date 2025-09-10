@@ -4,8 +4,6 @@ import { useState, useEffect } from 'react';
 import { useSecurityStore } from './src/state/security';
 import threatDetector from './src/utils/threatDetection';
 import autoRebootManager from './src/utils/autoReboot';
-import clipboardSecurityManager from './src/utils/clipboardSecurity';
-import messageExpirationManager from './src/utils/messageExpiration';
 import VanishMessage from './src/components/VanishMessage';
 import SecureChat from './src/components/SecureChat';
 import DefconOnePanel from './src/components/DefconOnePanel';
@@ -14,10 +12,6 @@ import ContactManager from './src/components/ContactManager';
 import MatrixBackground from './src/components/MatrixBackground';
 import RemoteKillSystem from './src/components/RemoteKillSystem';
 import MessageExpirationSettings from './src/components/MessageExpirationSettings';
-import VaultDoubleSecuritySetup from './src/components/VaultDoubleSecuritySetup';
-import VaultDoubleSecurityUnlock from './src/components/VaultDoubleSecurityUnlock';
-// import LiveKitVideoCall from './src/components/LiveKitVideoCall';
-import GroupChatManager from './src/components/GroupChatManager';
 
 export default function App() {
   const [pin, setPin] = useState('');

@@ -160,9 +160,13 @@ class SecurityMiddleware(BaseHTTPMiddleware):
         try:
             if request.method in ["POST", "PUT", "PATCH"]:
                 body = await request.body()
-                return body.decode() if body else ""
+                if body:
+                    # Reset the request body stream so it can be read again
+                    request._body = body
+                    return body.decode()
             return ""
-        except:
+        except Exception as e:
+            print(f"Error reading request body: {e}")
             return ""
 
     def detect_sql_injection(self, data: str) -> bool:

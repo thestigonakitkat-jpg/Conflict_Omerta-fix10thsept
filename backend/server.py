@@ -27,6 +27,8 @@ from pin_security import router as pin_router
 from livekit_manager import livekit_manager
 from admin_system import admin_system, AdminAuthRequest, MultiSigInitRequest, MultiSigSignRequest
 from graphite_defense import router as graphite_router
+from file_sharing import router as file_sharing_router
+from voice_messages import router as voice_messages_router
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')

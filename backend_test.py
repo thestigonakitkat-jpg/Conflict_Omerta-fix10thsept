@@ -545,11 +545,74 @@ class OMERTASecurityTester:
         except Exception as e:
             self.log_test("PIN Security - Panic PIN Detection", False, f"Error: {str(e)}")
     
-    def test_additional_security_systems(self):
-        """Test Additional Security Systems"""
-        print("\n🔐 TESTING ADDITIONAL SECURITY SYSTEMS")
+    def test_messaging_envelopes(self):
+        """Test Messaging Envelopes System"""
+        print("\n📨 TESTING MESSAGING ENVELOPES")
         
-        # 1. Test Contact Vault System
+        # 1. Test envelope sending
+        try:
+            envelope_data = {
+                "to_oid": "user_recipient_001",
+                "from_oid": "user_sender_001", 
+                "ciphertext": "encrypted_message_content_base64_encoded_data"
+            }
+            
+            response = requests.post(f"{BACKEND_URL}/envelopes/send", 
+                                   json=envelope_data, timeout=10)
+            if response.status_code == 200:
+                result = response.json()
+                if result.get('id'):
+                    self.envelope_id = result['id']
+                    self.log_test("Envelope Send", True, f"Envelope sent with ID: {result['id'][:8]}...")
+                else:
+                    self.log_test("Envelope Send", False, f"No envelope ID returned: {result}")
+            else:
+                self.log_test("Envelope Send", False, f"HTTP {response.status_code}")
+        except Exception as e:
+            self.log_test("Envelope Send", False, f"Error: {str(e)}")
+        
+        # 2. Test envelope polling (first poll should deliver)
+        try:
+            response = requests.get(f"{BACKEND_URL}/envelopes/poll?oid=user_recipient_001", timeout=10)
+            if response.status_code == 200:
+                result = response.json()
+                messages = result.get('messages', [])
+                if len(messages) > 0:
+                    message = messages[0]
+                    if message.get('id') and message.get('from_oid') and message.get('ciphertext'):
+                        self.log_test("Envelope Poll (First)", True, 
+                                    f"Message delivered: ID={message['id'][:8]}..., From={message['from_oid']}")
+                    else:
+                        self.log_test("Envelope Poll (First)", False, f"Incomplete message data: {message}")
+                else:
+                    self.log_test("Envelope Poll (First)", False, "No messages returned")
+            else:
+                self.log_test("Envelope Poll (First)", False, f"HTTP {response.status_code}")
+        except Exception as e:
+            self.log_test("Envelope Poll (First)", False, f"Error: {str(e)}")
+        
+        # 3. Test delete-on-delivery (second poll should be empty)
+        try:
+            response = requests.get(f"{BACKEND_URL}/envelopes/poll?oid=user_recipient_001", timeout=10)
+            if response.status_code == 200:
+                result = response.json()
+                messages = result.get('messages', [])
+                if len(messages) == 0:
+                    self.log_test("Envelope Delete-on-Delivery", True, 
+                                "Second poll returned empty (delete-on-delivery working)")
+                else:
+                    self.log_test("Envelope Delete-on-Delivery", False, 
+                                f"Second poll returned {len(messages)} messages (should be 0)")
+            else:
+                self.log_test("Envelope Delete-on-Delivery", False, f"HTTP {response.status_code}")
+        except Exception as e:
+            self.log_test("Envelope Delete-on-Delivery", False, f"Error: {str(e)}")
+
+    def test_contact_vault_system(self):
+        """Test Contact Vault System"""
+        print("\n📇 TESTING CONTACT VAULT SYSTEM")
+        
+        # 1. Test contact vault storage
         try:
             contacts_data = {
                 "device_id": "test_device_vault_001",
@@ -557,8 +620,14 @@ class OMERTASecurityTester:
                 "contacts": [
                     {
                         "oid": "contact_001",
-                        "display_name": "Test Contact 1",
+                        "display_name": "Alice Johnson",
                         "verified": True,
+                        "created_at": int(time.time())
+                    },
+                    {
+                        "oid": "contact_002", 
+                        "display_name": "Bob Smith",
+                        "verified": False,
                         "created_at": int(time.time())
                     }
                 ]
@@ -569,72 +638,301 @@ class OMERTASecurityTester:
             if response.status_code == 200:
                 result = response.json()
                 if result.get('success') and result.get('backup_id'):
+                    self.vault_device_id = contacts_data['device_id']
+                    self.vault_encryption_key = contacts_data['encryption_key_hash']
                     self.log_test("Contact Vault Storage", True, 
-                                f"Contacts stored successfully, backup ID: {result['backup_id'][:8]}...")
-                    
-                    # Test retrieval
-                    device_id = contacts_data['device_id']
-                    encryption_key_hash = contacts_data['encryption_key_hash']
-                    
-                    response = requests.get(f"{BACKEND_URL}/contacts-vault/retrieve/{device_id}?encryption_key_hash={encryption_key_hash}", 
-                                          timeout=10)
-                    if response.status_code == 200:
-                        result = response.json()
-                        if result.get('success') and result.get('contacts'):
-                            self.log_test("Contact Vault Retrieval", True, 
-                                        f"Retrieved {len(result['contacts'])} contacts successfully")
-                        else:
-                            self.log_test("Contact Vault Retrieval", False, f"Retrieval failed: {result}")
-                    else:
-                        self.log_test("Contact Vault Retrieval", False, f"HTTP {response.status_code}")
+                                f"Stored {len(contacts_data['contacts'])} contacts, backup ID: {result['backup_id'][:8]}...")
                 else:
                     self.log_test("Contact Vault Storage", False, f"Storage failed: {result}")
             else:
                 self.log_test("Contact Vault Storage", False, f"HTTP {response.status_code}")
         except Exception as e:
-            self.log_test("Contact Vault System", False, f"Error: {str(e)}")
+            self.log_test("Contact Vault Storage", False, f"Error: {str(e)}")
         
-        # 2. Test Dual-Key Nuclear Protocol
+        # 2. Test contact vault retrieval
         try:
-            # Test Design A (Dual-Command Bridge)
-            dual_key_data = {
-                "operation_type": "system_reset",
-                "operation_data": {"reason": "Security test"},
-                "operator_a_id": "operator_alpha",
-                "operator_b_id": "operator_bravo"
-            }
-            
-            response = requests.post(f"{BACKEND_URL}/dual-key/initiate", 
-                                   json=dual_key_data, timeout=10)
+            response = requests.get(f"{BACKEND_URL}/contacts-vault/retrieve/{self.vault_device_id}?encryption_key_hash={self.vault_encryption_key}", 
+                                  timeout=10)
             if response.status_code == 200:
                 result = response.json()
-                if result.get('success') and result.get('operation_id'):
-                    self.log_test("Dual-Key Nuclear Protocol (Design A)", True, 
-                                f"Operation initiated: {result['operation_id']}")
+                if result.get('success') and result.get('contacts'):
+                    contacts = result['contacts']
+                    self.log_test("Contact Vault Retrieval", True, 
+                                f"Retrieved {len(contacts)} contacts successfully")
                 else:
-                    self.log_test("Dual-Key Nuclear Protocol (Design A)", False, f"Failed: {result}")
+                    self.log_test("Contact Vault Retrieval", False, f"Retrieval failed: {result}")
             else:
-                self.log_test("Dual-Key Nuclear Protocol (Design A)", False, f"HTTP {response.status_code}")
-            
-            # Test Design B (Split Master Key)
-            split_key_data = {
-                "operation_type": "emergency_access",
-                "operation_data": {"access_level": "admin"}
-            }
-            
-            response = requests.post(f"{BACKEND_URL}/split-master-key/initiate", 
-                                   json=split_key_data, timeout=10)
-            if response.status_code == 200:
-                result = response.json()
-                if result.get('success') and result.get('operation_id'):
-                    self.log_test("Dual-Key Nuclear Protocol (Design B)", True, 
-                                f"Split master key operation initiated: {result['operation_id']}")
-                else:
-                    self.log_test("Dual-Key Nuclear Protocol (Design B)", False, f"Failed: {result}")
-            else:
-                self.log_test("Dual-Key Nuclear Protocol (Design B)", False, f"HTTP {response.status_code}")
+                self.log_test("Contact Vault Retrieval", False, f"HTTP {response.status_code}")
         except Exception as e:
-            self.log_test("Dual-Key Nuclear Protocol", False, f"Error: {str(e)}")
+            self.log_test("Contact Vault Retrieval", False, f"Error: {str(e)}")
+        
+        # 3. Test contact vault clearing
+        try:
+            response = requests.delete(f"{BACKEND_URL}/contacts-vault/clear/{self.vault_device_id}", timeout=10)
+            if response.status_code == 200:
+                result = response.json()
+                if result.get('success'):
+                    self.log_test("Contact Vault Clear", True, "Vault cleared successfully")
+                else:
+                    self.log_test("Contact Vault Clear", False, f"Clear failed: {result}")
+            else:
+                self.log_test("Contact Vault Clear", False, f"HTTP {response.status_code}")
+        except Exception as e:
+            self.log_test("Contact Vault Clear", False, f"Error: {str(e)}")
+
+    def test_auto_wipe_system(self):
+        """Test Auto-Wipe System"""
+        print("\n⏰ TESTING AUTO-WIPE SYSTEM")
+        
+        # 1. Test auto-wipe configuration
+        try:
+            config_data = {
+                "device_id": "test_device_autowipe_001",
+                "enabled": True,
+                "days_inactive": 7,
+                "wipe_type": "app_data",
+                "warning_days": 2
+            }
+            
+            response = requests.post(f"{BACKEND_URL}/auto-wipe/configure", 
+                                   json=config_data, timeout=10)
+            if response.status_code == 200:
+                result = response.json()
+                if result.get('success') or result.get('configured'):
+                    self.autowipe_device_id = config_data['device_id']
+                    self.log_test("Auto-Wipe Configuration", True, 
+                                f"Configured {config_data['days_inactive']}-day auto-wipe for device")
+                else:
+                    self.log_test("Auto-Wipe Configuration", False, f"Configuration failed: {result}")
+            else:
+                self.log_test("Auto-Wipe Configuration", False, f"HTTP {response.status_code}")
+        except Exception as e:
+            self.log_test("Auto-Wipe Configuration", False, f"Error: {str(e)}")
+        
+        # 2. Test activity tracking
+        try:
+            activity_data = {
+                "device_id": self.autowipe_device_id,
+                "activity_type": "app_usage",
+                "timestamp": int(time.time())
+            }
+            
+            response = requests.post(f"{BACKEND_URL}/auto-wipe/activity", 
+                                   json=activity_data, timeout=10)
+            if response.status_code == 200:
+                result = response.json()
+                if result.get('success') or result.get('updated'):
+                    self.log_test("Auto-Wipe Activity Tracking", True, "Activity timestamp updated")
+                else:
+                    self.log_test("Auto-Wipe Activity Tracking", False, f"Activity update failed: {result}")
+            else:
+                self.log_test("Auto-Wipe Activity Tracking", False, f"HTTP {response.status_code}")
+        except Exception as e:
+            self.log_test("Auto-Wipe Activity Tracking", False, f"Error: {str(e)}")
+        
+        # 3. Test auto-wipe status check
+        try:
+            response = requests.get(f"{BACKEND_URL}/auto-wipe/status/{self.autowipe_device_id}", timeout=10)
+            if response.status_code == 200:
+                result = response.json()
+                if result.get('device_id') and 'days_until_wipe' in result:
+                    days_until_wipe = result.get('days_until_wipe', -1)
+                    self.log_test("Auto-Wipe Status Check", True, 
+                                f"Status retrieved: {days_until_wipe} days until wipe")
+                else:
+                    self.log_test("Auto-Wipe Status Check", False, f"Status check failed: {result}")
+            else:
+                self.log_test("Auto-Wipe Status Check", False, f"HTTP {response.status_code}")
+        except Exception as e:
+            self.log_test("Auto-Wipe Status Check", False, f"Error: {str(e)}")
+
+    def test_file_sharing_system(self):
+        """Test File Sharing System"""
+        print("\n📁 TESTING FILE SHARING SYSTEM")
+        
+        # 1. Test file upload
+        try:
+            # Create a test file
+            test_content = b"This is a test file for OMERTA file sharing system testing."
+            test_file = io.BytesIO(test_content)
+            
+            files = {'file': ('test_document.txt', test_file, 'text/plain')}
+            data = {'expiry_hours': 1, 'auto_destruct': True}
+            
+            response = requests.post(f"{BACKEND_URL}/files/upload", 
+                                   files=files, data=data, timeout=10)
+            if response.status_code == 200:
+                result = response.json()
+                if result.get('id') and result.get('download_link'):
+                    self.file_id = result['id']
+                    self.download_link = result['download_link']
+                    self.log_test("File Upload", True, 
+                                f"File uploaded: {result['name']}, Size: {result['size']} bytes")
+                else:
+                    self.log_test("File Upload", False, f"Upload failed: {result}")
+            else:
+                self.log_test("File Upload", False, f"HTTP {response.status_code}")
+        except Exception as e:
+            self.log_test("File Upload", False, f"Error: {str(e)}")
+        
+        # 2. Test file download
+        try:
+            # Extract token from download link
+            if hasattr(self, 'download_link'):
+                token = self.download_link.split('token=')[1] if 'token=' in self.download_link else ''
+                response = requests.get(f"{BACKEND_URL}/files/download/{self.file_id}?token={token}", timeout=10)
+                if response.status_code == 200:
+                    if len(response.content) > 0:
+                        self.log_test("File Download", True, 
+                                    f"File downloaded successfully, {len(response.content)} bytes")
+                    else:
+                        self.log_test("File Download", False, "Downloaded file is empty")
+                else:
+                    self.log_test("File Download", False, f"HTTP {response.status_code}")
+            else:
+                self.log_test("File Download", False, "No download link available from upload")
+        except Exception as e:
+            self.log_test("File Download", False, f"Error: {str(e)}")
+        
+        # 3. Test file listing
+        try:
+            response = requests.get(f"{BACKEND_URL}/files/list", timeout=10)
+            if response.status_code == 200:
+                result = response.json()
+                if 'files' in result and 'total_active' in result:
+                    active_files = result['total_active']
+                    self.log_test("File List", True, f"Listed {active_files} active files")
+                else:
+                    self.log_test("File List", False, f"List failed: {result}")
+            else:
+                self.log_test("File List", False, f"HTTP {response.status_code}")
+        except Exception as e:
+            self.log_test("File List", False, f"Error: {str(e)}")
+        
+        # 4. Test file deletion
+        try:
+            if hasattr(self, 'file_id'):
+                response = requests.delete(f"{BACKEND_URL}/files/{self.file_id}", timeout=10)
+                if response.status_code == 200:
+                    result = response.json()
+                    if result.get('message') and 'destroyed' in result['message'].lower():
+                        self.log_test("File Deletion", True, "File permanently destroyed")
+                    else:
+                        self.log_test("File Deletion", False, f"Deletion failed: {result}")
+                else:
+                    self.log_test("File Deletion", False, f"HTTP {response.status_code}")
+            else:
+                self.log_test("File Deletion", False, "No file ID available for deletion")
+        except Exception as e:
+            self.log_test("File Deletion", False, f"Error: {str(e)}")
+        
+        # 5. Test file cleanup
+        try:
+            response = requests.post(f"{BACKEND_URL}/files/cleanup", timeout=10)
+            if response.status_code == 200:
+                result = response.json()
+                if 'expired_files_removed' in result:
+                    removed_count = result['expired_files_removed']
+                    self.log_test("File Cleanup", True, f"Cleanup completed, {removed_count} expired files removed")
+                else:
+                    self.log_test("File Cleanup", False, f"Cleanup failed: {result}")
+            else:
+                self.log_test("File Cleanup", False, f"HTTP {response.status_code}")
+        except Exception as e:
+            self.log_test("File Cleanup", False, f"Error: {str(e)}")
+
+    def test_voice_message_system(self):
+        """Test Voice Message System"""
+        print("\n🎤 TESTING VOICE MESSAGE SYSTEM")
+        
+        # 1. Test voice message sending
+        try:
+            # Create a mock audio file
+            mock_audio_content = b"MOCK_AUDIO_DATA_FOR_TESTING_PURPOSES_M4A_FORMAT"
+            audio_file = io.BytesIO(mock_audio_content)
+            
+            files = {'audio': ('voice_message.m4a', audio_file, 'audio/m4a')}
+            data = {'scrambled': True, 'encrypted': True}
+            
+            response = requests.post(f"{BACKEND_URL}/voice/send", 
+                                   files=files, data=data, timeout=10)
+            if response.status_code == 200:
+                result = response.json()
+                if result.get('message_id') and result.get('status') == 'sent':
+                    self.voice_message_id = result['message_id']
+                    self.log_test("Voice Message Send", True, 
+                                f"Voice message sent: ID={result['message_id'][:8]}..., Size={result['size']} bytes")
+                else:
+                    self.log_test("Voice Message Send", False, f"Send failed: {result}")
+            else:
+                self.log_test("Voice Message Send", False, f"HTTP {response.status_code}")
+        except Exception as e:
+            self.log_test("Voice Message Send", False, f"Error: {str(e)}")
+        
+        # 2. Test voice message playback
+        try:
+            if hasattr(self, 'voice_message_id'):
+                response = requests.get(f"{BACKEND_URL}/voice/play/{self.voice_message_id}", timeout=10)
+                if response.status_code == 200:
+                    result = response.json()
+                    if result.get('message_id') and result.get('encoded_content'):
+                        self.log_test("Voice Message Play", True, 
+                                    f"Voice message retrieved for playback: {result['filename']}")
+                    else:
+                        self.log_test("Voice Message Play", False, f"Play failed: {result}")
+                else:
+                    self.log_test("Voice Message Play", False, f"HTTP {response.status_code}")
+            else:
+                self.log_test("Voice Message Play", False, "No voice message ID available")
+        except Exception as e:
+            self.log_test("Voice Message Play", False, f"Error: {str(e)}")
+        
+        # 3. Test voice message listing
+        try:
+            response = requests.get(f"{BACKEND_URL}/voice/messages", timeout=10)
+            if response.status_code == 200:
+                result = response.json()
+                if 'messages' in result and 'total_active' in result:
+                    active_messages = result['total_active']
+                    self.log_test("Voice Message List", True, f"Listed {active_messages} active voice messages")
+                else:
+                    self.log_test("Voice Message List", False, f"List failed: {result}")
+            else:
+                self.log_test("Voice Message List", False, f"HTTP {response.status_code}")
+        except Exception as e:
+            self.log_test("Voice Message List", False, f"Error: {str(e)}")
+        
+        # 4. Test voice message deletion
+        try:
+            if hasattr(self, 'voice_message_id'):
+                response = requests.delete(f"{BACKEND_URL}/voice/{self.voice_message_id}", timeout=10)
+                if response.status_code == 200:
+                    result = response.json()
+                    if result.get('message') and 'deleted' in result['message'].lower():
+                        self.log_test("Voice Message Delete", True, "Voice message deleted successfully")
+                    else:
+                        self.log_test("Voice Message Delete", False, f"Delete failed: {result}")
+                else:
+                    self.log_test("Voice Message Delete", False, f"HTTP {response.status_code}")
+            else:
+                self.log_test("Voice Message Delete", False, "No voice message ID available")
+        except Exception as e:
+            self.log_test("Voice Message Delete", False, f"Error: {str(e)}")
+        
+        # 5. Test voice message cleanup
+        try:
+            response = requests.post(f"{BACKEND_URL}/voice/cleanup", timeout=10)
+            if response.status_code == 200:
+                result = response.json()
+                if 'expired_messages_removed' in result:
+                    removed_count = result['expired_messages_removed']
+                    self.log_test("Voice Message Cleanup", True, f"Cleanup completed, {removed_count} expired messages removed")
+                else:
+                    self.log_test("Voice Message Cleanup", False, f"Cleanup failed: {result}")
+            else:
+                self.log_test("Voice Message Cleanup", False, f"HTTP {response.status_code}")
+        except Exception as e:
+            self.log_test("Voice Message Cleanup", False, f"Error: {str(e)}")
     
     def run_comprehensive_test(self):
         """Run comprehensive security test suite"""

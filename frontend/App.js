@@ -506,6 +506,18 @@ export default function App() {
         onClose={() => setShowGroupChatManager(false)}
       />
       
+      {/* File Sharing Modal */}
+      <FileSharing
+        visible={showFileSharing}
+        onClose={() => setShowFileSharing(false)}
+      />
+
+      {/* Voice Messages Modal */}
+      <VoiceMessages
+        visible={showVoiceMessages}
+        onClose={() => setShowVoiceMessages(false)}
+      />
+      
       <StatusBar style="light" />
     </View>
   );

@@ -367,21 +367,86 @@ class GraphiteDefenseSystem:
         return recommendations
     
     async def analyze_threat_report(self, device_id: str, metrics: ThreatReport) -> ThreatAnalysis:
-        """Analyze a threat report and return threat analysis"""
+        """Analyze a threat report with NSA signature evasion detection"""
         try:
+            # NSA SIGNATURE EVASION DETECTION
+            current_time = time.time()
+            
+            # Initialize device pattern tracking
+            if device_id not in self.device_patterns:
+                self.device_patterns[device_id] = {
+                    'reports': [],
+                    'suspicious_patterns': 0,
+                    'evasion_attempts': 0,
+                    'last_analysis_time': 0,
+                    'confidence_adjustments': 0
+                }
+            
+            pattern = self.device_patterns[device_id]
+            pattern['reports'].append({
+                'timestamp': current_time,
+                'cpu_avg': sum(metrics.cpu_usage_pattern) / len(metrics.cpu_usage_pattern),
+                'memory_pressure': metrics.memory_pressure,
+                'battery_drain': metrics.battery_drain_rate,
+                'network_anomalies': metrics.network_anomalies
+            })
+            
+            # Keep only last 50 reports (sliding window)
+            pattern['reports'] = pattern['reports'][-50:]
+            
+            # DETECT NSA-STYLE THRESHOLD DANCING
+            if len(pattern['reports']) >= 10:
+                cpu_values = [r['cpu_avg'] for r in pattern['reports'][-10:]]
+                memory_values = [r['memory_pressure'] for r in pattern['reports'][-10:]]
+                
+                # Check for consistent staying-below-threshold behavior
+                cpu_variance = max(cpu_values) - min(cpu_values)
+                memory_variance = max(memory_values) - min(memory_values)
+                
+                # Too consistent = algorithmic evasion
+                if cpu_variance < 0.05 and memory_variance < 0.03:
+                    pattern['evasion_attempts'] += 1
+                    pattern['confidence_adjustments'] += 0.2
+                    logger.warning(f"🚨 NSA EVASION DETECTED: Device {device_id} showing algorithmic threshold dancing")
+                
+                # Check for suspicious timing patterns
+                time_intervals = []
+                for i in range(1, len(pattern['reports'])):
+                    interval = pattern['reports'][i]['timestamp'] - pattern['reports'][i-1]['timestamp']
+                    time_intervals.append(interval)
+                
+                if len(time_intervals) >= 5:
+                    interval_variance = max(time_intervals) - min(time_intervals)
+                    if interval_variance < 1.0:  # Too regular timing
+                        pattern['evasion_attempts'] += 1
+                        pattern['confidence_adjustments'] += 0.15
+                        logger.warning(f"🚨 NSA TIMING ATTACK DETECTED: Device {device_id} using algorithmic timing")
+            
             # Establish/update device baseline
             self.establish_device_baseline(device_id, metrics)
             
             # Analyze against known Graphite signatures
-            signature_matches, confidence = self.analyze_threat_signatures(device_id, metrics)
+            signature_matches, base_confidence = self.analyze_threat_signatures(device_id, metrics)
+            
+            # ADAPTIVE CONFIDENCE ADJUSTMENT for suspected evaders
+            adjusted_confidence = base_confidence + (pattern['confidence_adjustments'] * 30)
+            adjusted_confidence = min(adjusted_confidence, 95.0)  # Cap at 95%
+            
+            # If device has history of evasion attempts, lower detection thresholds
+            if pattern['evasion_attempts'] > 0:
+                # Lower thresholds make detection more sensitive
+                evasion_multiplier = 1.0 + (pattern['evasion_attempts'] * 0.3)
+                adjusted_confidence *= evasion_multiplier
+                
+            confidence = min(adjusted_confidence, 100.0)
             
             # Calculate anomaly score
             anomaly_score = self.calculate_anomaly_score(device_id, metrics)
             
-            # Determine threat level
+            # Determine threat level (with NSA evasion awareness)
             threat_level = self.determine_threat_level(confidence, anomaly_score)
             
-            # Generate indicators
+            # Generate indicators (including evasion detection)
             indicators = []
             if confidence > 0:
                 indicators.append(f"Signature confidence: {confidence:.1f}%")
@@ -389,15 +454,25 @@ class GraphiteDefenseSystem:
                 indicators.append(f"Baseline deviation: {anomaly_score*100:.1f}%")
             if len(signature_matches) > 0:
                 indicators.append(f"Matched signatures: {len(signature_matches)}")
+            if pattern['evasion_attempts'] > 0:
+                indicators.append(f"🚨 NSA EVASION ATTEMPTS: {pattern['evasion_attempts']}")
+                indicators.append(f"Confidence boost applied: +{pattern['confidence_adjustments']*30:.1f}%")
             
             # Generate recommendations
             recommendations = self.generate_recommendations(threat_level, signature_matches)
             
+            # Add NSA-specific recommendations
+            if pattern['evasion_attempts'] > 0:
+                recommendations.append("🚨 ADVANCED PERSISTENT THREAT: Implement enhanced monitoring")
+                recommendations.append("🛡️ ADAPTIVE COUNTERMEASURES: Deploy anti-evasion protocols")
+            
             # Check if countermeasures are active
             countermeasures_deployed = device_id in self.active_countermeasures
             
-            # Calculate overall risk score
-            risk_score = min((confidence * 0.7) + (anomaly_score * 100 * 0.3), 100)
+            # Calculate overall risk score (with evasion factor)
+            evasion_factor = 1.0 + (pattern['evasion_attempts'] * 0.2)
+            risk_score = min((confidence * 0.7) + (anomaly_score * 100 * 0.3), 100) * evasion_factor
+            risk_score = min(risk_score, 100.0)
             
             analysis = ThreatAnalysis(
                 device_id=device_id,
@@ -414,11 +489,11 @@ class GraphiteDefenseSystem:
             # Store analysis
             await self._store_threat_analysis(analysis)
             
-            # Trigger automatic countermeasures if needed
-            if threat_level >= ThreatLevel.CONFIRMED_SPYWARE:
+            # Trigger automatic countermeasures if needed (or if evasion detected)
+            if threat_level >= ThreatLevel.CONFIRMED_SPYWARE or pattern['evasion_attempts'] > 2:
                 await self._trigger_automatic_countermeasures(device_id, threat_level)
             
-            logger.info(f"🎯 GRAPHITE DEFENSE: Threat analysis completed for {device_id} - Level: {threat_level.name}, Confidence: {confidence:.1f}%")
+            logger.info(f"🎯 GRAPHITE DEFENSE: Enhanced threat analysis completed for {device_id} - Level: {threat_level.name}, Confidence: {confidence:.1f}%, Evasion Attempts: {pattern['evasion_attempts']}")
             
             return analysis
             

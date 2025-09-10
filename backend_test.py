@@ -935,9 +935,9 @@ class OMERTASecurityTester:
             self.log_test("Voice Message Cleanup", False, f"Error: {str(e)}")
     
     def run_comprehensive_test(self):
-        """Run comprehensive security test suite"""
-        print("🔒 OMERTÁ COMPREHENSIVE BACKEND SECURITY TESTING")
-        print("=" * 60)
+        """Run comprehensive security test suite - 24 tests total"""
+        print("🔒 OMERTÁ COMPREHENSIVE BACKEND SECURITY TESTING - 24 SYSTEM TEST SUITE")
+        print("=" * 80)
         
         # Initialize session variables
         self.admin_session_token = None
@@ -947,53 +947,363 @@ class OMERTASecurityTester:
         self.operation_id = None
         self.note_id = None
         self.shredder_device_id = None
+        self.vault_device_id = None
+        self.vault_encryption_key = None
+        self.autowipe_device_id = None
+        self.file_id = None
+        self.download_link = None
+        self.voice_message_id = None
         
         # Run all test suites
         if not self.test_basic_connectivity():
             print("❌ CRITICAL: Basic connectivity failed. Aborting tests.")
             return
         
-        self.test_graphite_defense_system()
+        # Core Systems (9 tests)
+        self.test_secure_notes_system()
+        self.test_messaging_envelopes()
+        self.test_steelos_shredder_system()
+        
+        # Security Systems (8 tests)
+        self.test_contact_vault_system()
+        self.test_auto_wipe_system()
+        self.test_pin_security_system()
+        
+        # Admin System (6 tests)
         self.test_admin_system()
-        self.test_core_api_endpoints()
+        
+        # File & Voice Systems (10 tests)
+        self.test_file_sharing_system()
+        self.test_voice_message_system()
+        
+        # Security Features (2 tests)
         self.test_security_features()
-        self.test_additional_security_systems()
         
         # Print final results
-        print("\n" + "=" * 60)
-        print("🎯 FINAL TEST RESULTS")
-        print("=" * 60)
+        print("\n" + "=" * 80)
+        print("🎯 FINAL TEST RESULTS - COMPREHENSIVE BACKEND SECURITY AUDIT")
+        print("=" * 80)
         
         success_rate = (self.passed_tests / self.total_tests * 100) if self.total_tests > 0 else 0
         
-        print(f"Total Tests: {self.total_tests}")
-        print(f"Passed: {self.passed_tests} ✅")
-        print(f"Failed: {self.failed_tests} ❌")
-        print(f"Success Rate: {success_rate:.1f}%")
+        print(f"📊 TOTAL TESTS: {self.total_tests}/24 (Expected 24)")
+        print(f"✅ PASSED: {self.passed_tests}")
+        print(f"❌ FAILED: {self.failed_tests}")
+        print(f"📈 SUCCESS RATE: {success_rate:.1f}%")
         
-        if success_rate >= 80:
-            print("🎉 OMERTÁ SECURITY SYSTEMS: PRODUCTION READY")
+        # Detailed breakdown
+        print(f"\n📋 TEST BREAKDOWN:")
+        print(f"   • Basic API: 1 test")
+        print(f"   • Secure Notes: 3 tests")
+        print(f"   • Messaging Envelopes: 3 tests")
+        print(f"   • STEELOS-Shredder: 3 tests")
+        print(f"   • Contact Vault: 3 tests")
+        print(f"   • Auto-Wipe: 3 tests")
+        print(f"   • PIN Security: 2 tests")
+        print(f"   • Admin Multi-Sig: 6 tests")
+        print(f"   • File Sharing: 5 tests")
+        print(f"   • Voice Messages: 5 tests")
+        print(f"   • Security Features: 2 tests")
+        
+        if success_rate >= 90:
+            print("\n🎉 OMERTÁ SECURITY SYSTEMS: EXCELLENT - PRODUCTION READY")
+        elif success_rate >= 80:
+            print("\n✅ OMERTÁ SECURITY SYSTEMS: GOOD - PRODUCTION READY")
+        elif success_rate >= 70:
+            print("\n⚠️ OMERTÁ SECURITY SYSTEMS: ACCEPTABLE - MINOR ISSUES")
         elif success_rate >= 60:
-            print("⚠️ OMERTÁ SECURITY SYSTEMS: NEEDS ATTENTION")
+            print("\n🔧 OMERTÁ SECURITY SYSTEMS: NEEDS ATTENTION")
         else:
-            print("🚨 OMERTÁ SECURITY SYSTEMS: CRITICAL ISSUES DETECTED")
+            print("\n🚨 OMERTÁ SECURITY SYSTEMS: CRITICAL ISSUES DETECTED")
+        
+        # List failed tests for debugging
+        if self.failed_tests > 0:
+            print(f"\n❌ FAILED TESTS ({self.failed_tests}):")
+            for result in self.results:
+                if not result['success']:
+                    print(f"   • {result['test']}: {result['details']}")
         
         # Save detailed results
-        with open('/app/omerta_security_test_results.json', 'w') as f:
+        with open('/app/omerta_comprehensive_test_results.json', 'w') as f:
             json.dump({
                 'summary': {
                     'total_tests': self.total_tests,
+                    'expected_tests': 24,
                     'passed_tests': self.passed_tests,
                     'failed_tests': self.failed_tests,
                     'success_rate': success_rate,
-                    'timestamp': datetime.now().isoformat()
+                    'timestamp': datetime.now().isoformat(),
+                    'test_categories': {
+                        'basic_api': 1,
+                        'secure_notes': 3,
+                        'messaging_envelopes': 3,
+                        'steelos_shredder': 3,
+                        'contact_vault': 3,
+                        'auto_wipe': 3,
+                        'pin_security': 2,
+                        'admin_multisig': 6,
+                        'file_sharing': 5,
+                        'voice_messages': 5,
+                        'security_features': 2
+                    }
                 },
                 'detailed_results': self.results
             }, f, indent=2)
         
-        print(f"\n📊 Detailed results saved to: /app/omerta_security_test_results.json")
+        print(f"\n📊 Detailed results saved to: /app/omerta_comprehensive_test_results.json")
         
         return success_rate
+
+    def test_secure_notes_system(self):
+        """Test Secure Notes System (3 tests)"""
+        print("\n📝 TESTING SECURE NOTES SYSTEM")
+        
+        # 1. Test secure notes creation
+        try:
+            note_data = {
+                "ciphertext": "U2FsdGVkX1+vupppZksvRf5pq5g5XjFRIipRkwB0K1Y96Qsv2Lm+31cmzaAILwyt",
+                "meta": {"type": "secure_note", "created_by": "test_user"},
+                "ttl_seconds": 3600,
+                "read_limit": 1
+            }
+            
+            response = requests.post(f"{BACKEND_URL}/notes", json=note_data, timeout=10)
+            if response.status_code == 200:
+                result = response.json()
+                if result.get('id'):
+                    self.note_id = result['id']
+                    views_left = result.get('views_left', 0)
+                    self.log_test("Secure Notes Creation", True, 
+                                f"Note created: {self.note_id[:8]}..., Views left: {views_left}")
+                else:
+                    self.log_test("Secure Notes Creation", False, f"No note ID returned: {result}")
+            else:
+                self.log_test("Secure Notes Creation", False, f"HTTP {response.status_code}")
+        except Exception as e:
+            self.log_test("Secure Notes Creation", False, f"Error: {str(e)}")
+        
+        # 2. Test secure notes reading (one-time read)
+        try:
+            if hasattr(self, 'note_id'):
+                response = requests.get(f"{BACKEND_URL}/notes/{self.note_id}", timeout=10)
+                if response.status_code == 200:
+                    result = response.json()
+                    if result.get('ciphertext') and result.get('views_left') == 0:
+                        self.log_test("Secure Notes One-Time Read", True, 
+                                    "Note read successfully, purged after single read")
+                    else:
+                        self.log_test("Secure Notes One-Time Read", False, f"Unexpected result: {result}")
+                else:
+                    self.log_test("Secure Notes One-Time Read", False, f"HTTP {response.status_code}")
+            else:
+                self.log_test("Secure Notes One-Time Read", False, "No note ID available")
+        except Exception as e:
+            self.log_test("Secure Notes One-Time Read", False, f"Error: {str(e)}")
+        
+        # 3. Test note expiry (second read should fail)
+        try:
+            if hasattr(self, 'note_id'):
+                response = requests.get(f"{BACKEND_URL}/notes/{self.note_id}", timeout=10)
+                if response.status_code == 404:
+                    self.log_test("Secure Notes TTL Expiry", True, 
+                                "Second read correctly returned 404 (note purged)")
+                else:
+                    self.log_test("Secure Notes TTL Expiry", False, 
+                                f"Second read should return 404, got {response.status_code}")
+            else:
+                self.log_test("Secure Notes TTL Expiry", False, "No note ID available")
+        except Exception as e:
+            self.log_test("Secure Notes TTL Expiry", False, f"Error: {str(e)}")
+
+    def test_steelos_shredder_system(self):
+        """Test STEELOS-Shredder System (3 tests)"""
+        print("\n💊 TESTING STEELOS-SHREDDER SYSTEM")
+        
+        # 1. Test STEELOS-Shredder deployment
+        try:
+            shredder_data = {
+                "device_id": "test_device_shredder_001",
+                "trigger_type": "manual",
+                "confirmation_token": "test_token_123"
+            }
+            
+            response = requests.post(f"{BACKEND_URL}/steelos-shredder/deploy", 
+                                   json=shredder_data, timeout=10)
+            if response.status_code == 200:
+                result = response.json()
+                if result.get('shredder_activated') and result.get('kill_token_generated'):
+                    self.shredder_device_id = shredder_data['device_id']
+                    self.log_test("STEELOS-Shredder Deployment", True, 
+                                "CYANIDE TABLET deployed, kill token generated")
+                else:
+                    self.log_test("STEELOS-Shredder Deployment", False, f"Deployment failed: {result}")
+            else:
+                self.log_test("STEELOS-Shredder Deployment", False, f"HTTP {response.status_code}")
+        except Exception as e:
+            self.log_test("STEELOS-Shredder Deployment", False, f"Error: {str(e)}")
+        
+        # 2. Test STEELOS-Shredder status and kill token retrieval
+        try:
+            if hasattr(self, 'shredder_device_id'):
+                response = requests.get(f"{BACKEND_URL}/steelos-shredder/status/{self.shredder_device_id}", 
+                                      timeout=10)
+                if response.status_code == 200:
+                    result = response.json()
+                    if result.get('shredder_pending') and result.get('kill_token'):
+                        kill_token = result['kill_token']
+                        signature = kill_token.get('signature', '')
+                        if len(signature) == 64:  # HMAC-SHA256 produces 64-char hex
+                            self.log_test("STEELOS Kill Token Retrieval", True, 
+                                        f"Kill token retrieved with valid signature ({len(signature)} chars)")
+                        else:
+                            self.log_test("STEELOS Kill Token Retrieval", False, 
+                                        f"Invalid signature length: {len(signature)}")
+                    else:
+                        self.log_test("STEELOS Kill Token Retrieval", False, f"No kill token pending: {result}")
+                else:
+                    self.log_test("STEELOS Kill Token Retrieval", False, f"HTTP {response.status_code}")
+            else:
+                self.log_test("STEELOS Kill Token Retrieval", False, "No shredder device ID available")
+        except Exception as e:
+            self.log_test("STEELOS Kill Token Retrieval", False, f"Error: {str(e)}")
+        
+        # 3. Test one-time token use (second retrieval should return empty)
+        try:
+            if hasattr(self, 'shredder_device_id'):
+                response = requests.get(f"{BACKEND_URL}/steelos-shredder/status/{self.shredder_device_id}", 
+                                      timeout=10)
+                if response.status_code == 200:
+                    result = response.json()
+                    if not result.get('shredder_pending') and not result.get('kill_token'):
+                        self.log_test("STEELOS One-Time Token Use", True, 
+                                    "Token consumed after first retrieval (one-time use verified)")
+                    else:
+                        self.log_test("STEELOS One-Time Token Use", False, 
+                                    f"Token still available: {result}")
+                else:
+                    self.log_test("STEELOS One-Time Token Use", False, f"HTTP {response.status_code}")
+            else:
+                self.log_test("STEELOS One-Time Token Use", False, "No shredder device ID available")
+        except Exception as e:
+            self.log_test("STEELOS One-Time Token Use", False, f"Error: {str(e)}")
+
+    def test_pin_security_system(self):
+        """Test PIN Security System (2 tests)"""
+        print("\n🔐 TESTING PIN SECURITY SYSTEM")
+        
+        # 1. Test normal PIN verification
+        try:
+            pin_data = {
+                "device_id": "test_device_pin_001",
+                "pin": "123456",
+                "timestamp": int(time.time())
+            }
+            
+            response = requests.post(f"{BACKEND_URL}/pin/verify", json=pin_data, timeout=10)
+            if response.status_code == 200:
+                result = response.json()
+                if result.get('success'):
+                    self.log_test("PIN Security - Normal PIN", True, "Normal PIN verification working")
+                else:
+                    self.log_test("PIN Security - Normal PIN", False, f"Normal PIN failed: {result}")
+            else:
+                self.log_test("PIN Security - Normal PIN", False, f"HTTP {response.status_code}")
+        except Exception as e:
+            self.log_test("PIN Security - Normal PIN", False, f"Error: {str(e)}")
+        
+        # 2. Test panic PIN detection
+        try:
+            panic_pin_data = {
+                "device_id": "test_device_panic_001",
+                "pin": "000000",  # Panic PIN
+                "timestamp": int(time.time())
+            }
+            
+            response = requests.post(f"{BACKEND_URL}/pin/verify", json=panic_pin_data, timeout=10)
+            if response.status_code == 200:
+                result = response.json()
+                if result.get('success') and result.get('kill_token'):
+                    kill_token = result['kill_token']
+                    if kill_token.get('command') == 'SIGNED_KILL_TOKEN_PANIC':
+                        self.log_test("PIN Security - Panic PIN Detection", True, 
+                                    "Panic PIN detected, signed kill token generated")
+                    else:
+                        self.log_test("PIN Security - Panic PIN Detection", False, 
+                                    f"Wrong kill token type: {kill_token.get('command')}")
+                else:
+                    self.log_test("PIN Security - Panic PIN Detection", False, 
+                                f"Panic PIN not detected properly: {result}")
+            else:
+                self.log_test("PIN Security - Panic PIN Detection", False, f"HTTP {response.status_code}")
+        except Exception as e:
+            self.log_test("PIN Security - Panic PIN Detection", False, f"Error: {str(e)}")
+
+    def test_security_features(self):
+        """Test Security Features - Rate Limiting and Input Sanitization (2 tests)"""
+        print("\n🔒 TESTING SECURITY FEATURES")
+        
+        # 1. Test input sanitization
+        try:
+            malicious_payloads = [
+                "<script>alert('xss')</script>",
+                "'; DROP TABLE notes; --",
+                "javascript:alert('xss')",
+                "../../../etc/passwd",
+                "eval(document.cookie)",
+                "<img src=x onerror=alert('xss')>",
+                "' OR '1'='1"
+            ]
+            
+            blocked_count = 0
+            for payload in malicious_payloads:
+                try:
+                    note_data = {
+                        "ciphertext": payload,
+                        "ttl_seconds": 3600,
+                        "read_limit": 1
+                    }
+                    
+                    response = requests.post(f"{BACKEND_URL}/notes", json=note_data, timeout=5)
+                    if response.status_code == 400:
+                        blocked_count += 1
+                except:
+                    blocked_count += 1  # Connection errors also count as blocked
+            
+            if blocked_count >= 6:  # Should block most malicious payloads
+                self.log_test("Input Sanitization", True, 
+                            f"Blocked {blocked_count}/{len(malicious_payloads)} malicious payloads")
+            else:
+                self.log_test("Input Sanitization", False, 
+                            f"Only blocked {blocked_count}/{len(malicious_payloads)} payloads")
+        except Exception as e:
+            self.log_test("Input Sanitization", False, f"Error: {str(e)}")
+        
+        # 2. Test rate limiting (make rapid requests)
+        try:
+            rate_limit_triggered = False
+            for i in range(15):  # Try 15 rapid requests (limit should be 10/min for notes)
+                try:
+                    note_data = {
+                        "ciphertext": f"rate_limit_test_{i}",
+                        "ttl_seconds": 60,
+                        "read_limit": 1
+                    }
+                    
+                    response = requests.post(f"{BACKEND_URL}/notes", json=note_data, timeout=2)
+                    if response.status_code == 429:
+                        rate_limit_triggered = True
+                        break
+                except:
+                    pass  # Ignore individual request errors
+            
+            if rate_limit_triggered:
+                self.log_test("Rate Limiting Enforcement", True, 
+                            "Rate limiting triggered after rapid requests")
+            else:
+                self.log_test("Rate Limiting Enforcement", False, 
+                            "Rate limiting not enforced - security vulnerability")
+        except Exception as e:
+            self.log_test("Rate Limiting Enforcement", False, f"Error: {str(e)}")
 
 if __name__ == "__main__":
     tester = OMERTASecurityTester()

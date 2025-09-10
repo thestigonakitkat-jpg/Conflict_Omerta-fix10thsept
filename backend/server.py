@@ -29,6 +29,7 @@ from admin_system import admin_system, AdminAuthRequest, MultiSigInitRequest, Mu
 from graphite_defense import router as graphite_router
 from file_sharing import router as file_sharing_router
 from voice_messages import router as voice_messages_router
+from security_middleware import SecurityMiddleware, FileUploadSecurityValidator
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')

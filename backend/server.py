@@ -302,6 +302,28 @@ async def cleanup_notes_loop():
 # ---------------------------
 # Routes
 # ---------------------------
+@api_router.get("/security/csrf-token")
+async def get_csrf_token(request: Request):
+    """Generate CSRF token for client"""
+    client_ip = request.client.host if request.client else "unknown"
+    
+    # Get security middleware instance
+    middleware = None
+    for m in app.user_middleware:
+        if hasattr(m, 'cls') and m.cls.__name__ == 'SecurityMiddleware':
+            middleware = m.cls
+            break
+    
+    if middleware:
+        token = middleware.generate_csrf_token(middleware(), client_ip)
+        return {"csrf_token": token, "expires_in": 3600}
+    else:
+        # Fallback token generation
+        import secrets
+        token = secrets.token_urlsafe(32)
+        return {"csrf_token": token, "expires_in": 3600}
+
+
 @api_router.get("/")
 async def root():
     return {"message": "Hello World"}

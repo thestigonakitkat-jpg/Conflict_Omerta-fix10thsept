@@ -308,7 +308,6 @@ export default function App() {
           >
             <Text style={styles.statusSettingsText}>⏰ Message Expiry Settings</Text>
           </TouchableOpacity>
-          </View>
         </View>
 
         <TouchableOpacity 

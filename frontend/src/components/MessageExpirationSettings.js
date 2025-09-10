@@ -1,15 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   View, 
   Text, 
   StyleSheet, 
   TouchableOpacity, 
   Modal,
-  Slider,
-  Switch,
   Alert
 } from 'react-native';
-import messageExpirationManager from '../utils/messageExpiration';
 
 export default function MessageExpirationSettings({ 
   visible, 
@@ -17,68 +14,26 @@ export default function MessageExpirationSettings({
   onExpirySelected,
   currentExpiryMinutes = null
 }) {
-  const [selectedIndex, setSelectedIndex] = useState(5); // Default to 1 hour
-  const [isEnabled, setIsEnabled] = useState(true);
-  const [showAdvanced, setShowAdvanced] = useState(false);
-  const [sliderOptions, setSliderOptions] = useState([]);
+  const [selectedMinutes, setSelectedMinutes] = useState(60); // Default 1 hour
 
-  useEffect(() => {
-    // Load slider options from the manager
-    const options = messageExpirationManager.getSliderOptions();
-    setSliderOptions(options);
-    
-    // Set current expiry if provided
-    if (currentExpiryMinutes) {
-      const index = options.findIndex(opt => opt.minutes === currentExpiryMinutes);
-      if (index !== -1) {
-        setSelectedIndex(index);
-      }
-    }
-  }, [currentExpiryMinutes]);
+  const timeOptions = [
+    { minutes: 1, label: '1 minute' },
+    { minutes: 5, label: '5 minutes' },
+    { minutes: 15, label: '15 minutes' },
+    { minutes: 60, label: '1 hour' },
+    { minutes: 240, label: '4 hours' },
+    { minutes: 1440, label: '1 day' },
+    { minutes: 10080, label: '1 week' }
+  ];
 
   const handleConfirm = () => {
-    if (!isEnabled) {
-      onExpirySelected(null);
-    } else {
-      const selectedOption = sliderOptions[selectedIndex];
-      onExpirySelected(selectedOption.minutes);
-    }
+    onExpirySelected(selectedMinutes);
     onClose();
   };
 
-  const setDefaultExpiry = async () => {
-    try {
-      const selectedOption = sliderOptions[selectedIndex];
-      await messageExpirationManager.setDefaultExpiry(selectedOption.minutes / (7 * 24 * 60)); // Convert to weeks
-      Alert.alert(
-        '✅ Default Set',
-        `Default message expiry set to ${selectedOption.label}`,
-        [{ text: 'OK' }]
-      );
-    } catch (error) {
-      Alert.alert('Error', 'Failed to set default expiry');
-    }
-  };
-
-  const forceCleanup = async () => {
-    try {
-      const result = await messageExpirationManager.forceCleanup();
-      Alert.alert(
-        '🧹 Cleanup Complete',
-        `Expired ${result.expired} messages. ${result.active} messages remaining.`,
-        [{ text: 'OK' }]
-      );
-    } catch (error) {
-      Alert.alert('Error', 'Failed to run cleanup');
-    }
-  };
-
-  const getTimeDescription = () => {
-    if (!isEnabled) return 'Never expire (Default: 6 weeks)';
-    if (selectedIndex >= 0 && selectedIndex < sliderOptions.length) {
-      return sliderOptions[selectedIndex].label;
-    }
-    return '1 hour';
+  const handleDisable = () => {
+    onExpirySelected(null);
+    onClose();
   };
 
   if (!visible) return null;
@@ -89,129 +44,61 @@ export default function MessageExpirationSettings({
         <View style={styles.container}>
           <View style={styles.header}>
             <Text style={styles.title}>⏰ MESSAGE EXPIRATION</Text>
-            <Text style={styles.subtitle}>Auto-Purge Security System</Text>
+            <Text style={styles.subtitle}>Auto-Delete Security</Text>
             <TouchableOpacity style={styles.closeButton} onPress={onClose}>
               <Text style={styles.closeButtonText}>✕</Text>
             </TouchableOpacity>
           </View>
 
           <View style={styles.content}>
-            {/* Enable/Disable Toggle */}
-            <View style={styles.toggleContainer}>
-              <Text style={styles.toggleLabel}>Enable Message Expiration</Text>
-              <Switch
-                value={isEnabled}
-                onValueChange={setIsEnabled}
-                trackColor={{ false: '#666', true: '#ef4444' }}
-                thumbColor={isEnabled ? '#fff' : '#ccc'}
-              />
+            <Text style={styles.description}>
+              Choose how long messages should remain before auto-deletion:
+            </Text>
+
+            <View style={styles.optionsContainer}>
+              {timeOptions.map((option) => (
+                <TouchableOpacity
+                  key={option.minutes}
+                  style={[
+                    styles.optionButton,
+                    selectedMinutes === option.minutes && styles.selectedOption
+                  ]}
+                  onPress={() => setSelectedMinutes(option.minutes)}
+                >
+                  <Text style={[
+                    styles.optionText,
+                    selectedMinutes === option.minutes && styles.selectedOptionText
+                  ]}>
+                    {option.label}
+                  </Text>
+                </TouchableOpacity>
+              ))}
             </View>
 
-            {isEnabled && (
-              <>
-                {/* Current Selection */}
-                <View style={styles.selectionContainer}>
-                  <Text style={styles.selectionLabel}>Current Setting:</Text>
-                  <Text style={styles.selectionValue}>{getTimeDescription()}</Text>
-                </View>
+            <View style={styles.buttonsContainer}>
+              <TouchableOpacity 
+                style={[styles.actionButton, styles.disableButton]}
+                onPress={handleDisable}
+              >
+                <Text style={styles.buttonText}>❌ Disable Expiration</Text>
+              </TouchableOpacity>
 
-                {/* Slider */}
-                <View style={styles.sliderContainer}>
-                  <Text style={styles.sliderLabel}>Expiry Time (1 minute to 1 week)</Text>
-                  <Slider
-                    style={styles.slider}
-                    minimumValue={0}
-                    maximumValue={sliderOptions.length - 1}
-                    value={selectedIndex}
-                    onValueChange={(value) => setSelectedIndex(Math.round(value))}
-                    step={1}
-                    minimumTrackTintColor="#ef4444"
-                    maximumTrackTintColor="#666"
-                    thumbStyle={{ backgroundColor: '#ef4444' }}
-                  />
-                  
-                  <View style={styles.sliderLabels}>
-                    <Text style={styles.sliderLabelText}>1m</Text>
-                    <Text style={styles.sliderLabelText}>1w</Text>
-                  </View>
-                </View>
+              <TouchableOpacity 
+                style={styles.actionButton}
+                onPress={handleConfirm}
+              >
+                <Text style={styles.buttonText}>
+                  ✅ Set to {timeOptions.find(opt => opt.minutes === selectedMinutes)?.label}
+                </Text>
+              </TouchableOpacity>
+            </View>
 
-                {/* Quick Options */}
-                <View style={styles.quickOptions}>
-                  <Text style={styles.quickOptionsTitle}>Quick Select:</Text>
-                  <View style={styles.quickButtonsRow}>
-                    <TouchableOpacity 
-                      style={[styles.quickButton, selectedIndex === 0 && styles.quickButtonActive]}
-                      onPress={() => setSelectedIndex(0)}
-                    >
-                      <Text style={styles.quickButtonText}>1m</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity 
-                      style={[styles.quickButton, selectedIndex === 2 && styles.quickButtonActive]}
-                      onPress={() => setSelectedIndex(2)}
-                    >
-                      <Text style={styles.quickButtonText}>15m</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity 
-                      style={[styles.quickButton, selectedIndex === 5 && styles.quickButtonActive]}
-                      onPress={() => setSelectedIndex(5)}
-                    >
-                      <Text style={styles.quickButtonText}>1h</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity 
-                      style={[styles.quickButton, selectedIndex === 8 && styles.quickButtonActive]}
-                      onPress={() => setSelectedIndex(8)}
-                    >
-                      <Text style={styles.quickButtonText}>1d</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity 
-                      style={[styles.quickButton, selectedIndex === 10 && styles.quickButtonActive]}
-                      onPress={() => setSelectedIndex(10)}
-                    >
-                      <Text style={styles.quickButtonText}>1w</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              </>
-            )}
-
-            {/* Advanced Options */}
-            <TouchableOpacity 
-              style={styles.advancedToggle}
-              onPress={() => setShowAdvanced(!showAdvanced)}
-            >
-              <Text style={styles.advancedToggleText}>
-                {showAdvanced ? '▼' : '▶'} Advanced Options
-              </Text>
-            </TouchableOpacity>
-
-            {showAdvanced && (
-              <View style={styles.advancedOptions}>
-                <TouchableOpacity style={styles.advancedButton} onPress={setDefaultExpiry}>
-                  <Text style={styles.advancedButtonText}>Set as Default</Text>
-                </TouchableOpacity>
-                
-                <TouchableOpacity style={styles.advancedButton} onPress={forceCleanup}>
-                  <Text style={styles.advancedButtonText}>🧹 Force Cleanup Now</Text>
-                </TouchableOpacity>
-              </View>
-            )}
-
-            {/* Security Notice */}
             <View style={styles.securityNotice}>
-              <Text style={styles.securityNoticeTitle}>🛡️ SECURITY NOTICE</Text>
+              <Text style={styles.securityNoticeTitle}>🛡️ SECURITY INFO</Text>
               <Text style={styles.securityNoticeText}>
-                Messages expire automatically for your protection. Default expiry is 6 weeks. 
-                Very short expiry times (1-5 minutes) provide maximum security but may impact usability.
+                Messages will be automatically deleted after the selected time for your security.
               </Text>
             </View>
-
-            {/* Confirm Button */}
-            <TouchableOpacity style={styles.confirmButton} onPress={handleConfirm}>
-              <Text style={styles.confirmButtonText}>
-                {isEnabled ? `✅ Set to ${getTimeDescription()}` : '❌ Disable Expiration'}
-              </Text>
-            </TouchableOpacity>
           </View>
         </View>
       </View>

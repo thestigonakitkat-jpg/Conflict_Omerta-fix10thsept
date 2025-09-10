@@ -22,6 +22,9 @@ class SecurityMiddleware(BaseHTTPMiddleware):
         self.rate_limits = defaultdict(list)
         self.csrf_tokens = {}
         self.blocked_ips = set()
+        self.csrf_secret = secrets.token_urlsafe(32)  # Server-side secret for CSRF tokens
+        
+        # Enhanced detection patterns... (rest stays the same)
         
         # SQL injection patterns (comprehensive)
         self.sql_patterns = [

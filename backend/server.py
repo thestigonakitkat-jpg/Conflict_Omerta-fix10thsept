@@ -1177,6 +1177,12 @@ app.include_router(pin_router, prefix="/api")
 # Include the graphite defense router (already has /api prefix)
 app.include_router(graphite_router)
 
+# Include the file sharing router with /api prefix
+app.include_router(file_sharing_router, prefix="/api", tags=["file-sharing"])
+
+# Include the voice messages router with /api prefix
+app.include_router(voice_messages_router, prefix="/api", tags=["voice-messages"])
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # Configure for production

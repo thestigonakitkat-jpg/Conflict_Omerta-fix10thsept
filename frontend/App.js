@@ -4,6 +4,9 @@ import { useState, useEffect } from 'react';
 import { useSecurityStore } from './src/state/security';
 import threatDetector from './src/utils/threatDetection';
 import autoRebootManager from './src/utils/autoReboot';
+import clipboardSecurityManager from './src/utils/clipboardSecurity';
+import messageExpirationManager from './src/utils/messageExpiration';
+import vaultDoubleSecurityManager from './src/utils/vaultDoubleSecurity';
 import VanishMessage from './src/components/VanishMessage';
 import SecureChat from './src/components/SecureChat';
 import DefconOnePanel from './src/components/DefconOnePanel';
@@ -14,11 +17,13 @@ import RemoteKillSystem from './src/components/RemoteKillSystem';
 import MessageExpirationSettings from './src/components/MessageExpirationSettings';
 import FileSharing from './src/components/FileSharing';
 import VoiceMessages from './src/components/VoiceMessages';
+import GroupChatManager from './src/components/GroupChatManager';
+import VaultDoubleSecuritySetup from './src/components/VaultDoubleSecuritySetup';
+import VaultDoubleSecurityUnlock from './src/components/VaultDoubleSecurityUnlock';
 
 export default function App() {
   const [pin, setPin] = useState('');
   const [currentView, setCurrentView] = useState('auth'); // auth, main, demo, defcon
-  const [threatStatus, setThreatStatus] = useState('normal');
   const [showDefconPanel, setShowDefconPanel] = useState(false);
   const [showSteeloshShredder, setShowSteeloshShredder] = useState(false);
   const [shredderTrigger, setShredderTrigger] = useState('manual');
@@ -26,11 +31,21 @@ export default function App() {
   const [lastTapTime, setLastTapTime] = useState(0);
   const [nextRebootTime, setNextRebootTime] = useState(null);
   const [rebootWarning, setRebootWarning] = useState(false);
+  const [clipboardRestricted, setClipboardRestricted] = useState(false);
   const [showContactManager, setShowContactManager] = useState(false);
   const [showRemoteKillSystem, setShowRemoteKillSystem] = useState(false);
   const [showMessageExpirationSettings, setShowMessageExpirationSettings] = useState(false);
   const [showFileSharing, setShowFileSharing] = useState(false);
   const [showVoiceMessages, setShowVoiceMessages] = useState(false);
+  const [showGroupChatManager, setShowGroupChatManager] = useState(false);
+  const [showVaultSetup, setShowVaultSetup] = useState(false);
+  const [showVaultUnlock, setShowVaultUnlock] = useState(false);
+  const [vaultConfigured, setVaultConfigured] = useState(false);
+  const [vaultUnlocked, setVaultUnlocked] = useState(false);
+  const [fakeDialMode, setFakeDialMode] = useState(false);
+  const [messageExpiryEnabled, setMessageExpiryEnabled] = useState(true);
+  const [messageExpiryMinutes, setMessageExpiryMinutes] = useState(null);
+  const [messageExpiryLabel, setMessageExpiryLabel] = useState('6W DEFAULT');
   
   const { 
     isAuthenticated, 
@@ -40,74 +55,128 @@ export default function App() {
     addThreat,
     startMonitoring,
     stopMonitoring,
-    triggerPanicMode 
+    triggerPanicMode,
+    logout
   } = useSecurityStore();
 
   // Initialize security systems
   useEffect(() => {
-    // Initialize threat detection
-    threatDetector.initialize().then(() => {
-      threatDetector.onThreatDetected((analysis) => {
+    let isMounted = true;
+    let threatCallback;
+
+    clipboardSecurityManager.initialize();
+
+    const initThreatDetection = async () => {
+      const initialized = await threatDetector.initialize();
+      if (!initialized || !isMounted) {
+        return;
+      }
+
+      threatCallback = (analysis) => {
+        if (!isMounted) return;
+
         console.log('🚨 Threat detected:', analysis);
         setThreatLevel(analysis.level);
-        setThreatStatus(analysis.level);
-        
-        analysis.threats.forEach(threat => {
+
+        analysis.threats.forEach((threat) => {
           addThreat(threat);
         });
-        
+
         if (analysis.level === 'critical') {
           Alert.alert(
             '🚨 CRITICAL THREAT DETECTED',
             'Possible Pegasus/Graphite surveillance detected. OMERTÁ recommends immediate action.',
             [
-              { 
-                text: '🔥 STEELOS-Shredder', 
+              {
+                text: '🔥 STEELOS-Shredder',
                 style: 'destructive',
                 onPress: () => {
                   setShredderTrigger('threat_detected');
                   setShowSteeloshShredder(true);
-                }
+                },
               },
               { text: 'Activate DEFCON-1', onPress: () => setShowDefconPanel(true) },
-              { text: 'Continue Monitoring', style: 'cancel' }
-            ]
+              { text: 'Continue Monitoring', style: 'cancel' },
+            ],
           );
         }
-      });
-    });
+      };
 
-    // Initialize auto-reboot system
-    autoRebootManager.initialize().then(() => {
-      // Set up auto-reboot callbacks
+      threatDetector.onThreatDetected(threatCallback);
+    };
+
+    const initMessageExpiration = async () => {
+      const initialized = await messageExpirationManager.initialize();
+      if (!initialized || !isMounted) {
+        return;
+      }
+
+      const status = messageExpirationManager.getStatus();
+      setMessageExpiryEnabled(true);
+      setMessageExpiryLabel(`${status.defaultExpiryWeeks}W DEFAULT`);
+    };
+
+    initThreatDetection();
+    initMessageExpiration();
+
+    autoRebootManager.initialize().then((initialized) => {
+      if (!initialized || !isMounted) {
+        return;
+      }
+
       autoRebootManager.setCallbacks({
         onRebootScheduled: (time) => {
+          if (!isMounted) return;
           setNextRebootTime(time);
+          setRebootWarning(false);
           console.log(`🔄 Next reboot scheduled: ${time.toLocaleString()}`);
         },
         onRebootWarning: () => {
+          if (!isMounted) return;
           setRebootWarning(true);
         },
         onRebootExecuted: () => {
-          // Reset to authentication screen
+          if (!isMounted) return;
+
+          logout();
+          vaultDoubleSecurityManager.lockVault();
+          clipboardSecurityManager.exitSecureArea('main_app');
+          setClipboardRestricted(false);
           setCurrentView('auth');
-          setIsAuthenticated(false);
           setRebootWarning(false);
-        }
+          setNextRebootTime(null);
+          setMessageExpiryMinutes(null);
+          setMessageExpiryLabel('6W DEFAULT');
+          setMessageExpiryEnabled(true);
+          setShowVaultSetup(false);
+          setShowVaultUnlock(false);
+          setVaultUnlocked(false);
+          setFakeDialMode(false);
+        },
       });
     });
 
     return () => {
+      isMounted = false;
+
+      if (threatCallback) {
+        threatDetector.removeThreatCallback(threatCallback);
+      }
+
       threatDetector.stopMonitoring();
       autoRebootManager.stop();
+      messageExpirationManager.stop();
+      clipboardSecurityManager.exitSecureArea('main_app');
+      clipboardSecurityManager.restoreClipboardOperations();
     };
-  }, []);
+  }, [addThreat, logout, setThreatLevel]);
 
   const handleAuthentication = async () => {
     // Check for panic PIN first
     if (pin === '000000') {
       setShredderTrigger('panic_pin');
       setShowSteeloshShredder(true);
+      triggerPanicMode();
       setPin('');
       return;
     }
@@ -117,11 +186,13 @@ export default function App() {
       setCurrentView('main');
       startMonitoring();
       threatDetector.startMonitoring();
+      messageExpirationManager.startCleanupRoutine();
       
       // Enable clipboard restrictions on successful authentication
       clipboardSecurityManager.enterSecureArea('main_app');
       setClipboardRestricted(true);
       console.log('🔒 Entered secure OMERTÁ environment - clipboard restricted');
+      setPin('');
     } else {
       Alert.alert('Authentication Failed', 'Invalid PIN entered');
       setPin('');
@@ -172,6 +243,104 @@ export default function App() {
   const clearPIN = () => {
     setPin('');
   };
+
+  const formatExpiryBadge = (minutes) => {
+    if (minutes === null) return '6W DEFAULT';
+    if (minutes >= 10080) return '1W';
+    if (minutes >= 1440) {
+      const days = Math.round(minutes / 1440);
+      return days === 1 ? '1D' : `${days}D`;
+    }
+    if (minutes >= 60) {
+      const hours = Math.round(minutes / 60);
+      return hours === 1 ? '1H' : `${hours}H`;
+    }
+    return `${minutes}M`;
+  };
+
+  const formatExpiryDescription = (minutes) => {
+    if (minutes === null) return '6 weeks (default)';
+    if (minutes === 1) return '1 minute';
+    if (minutes < 60) return `${minutes} minutes`;
+    if (minutes === 60) return '1 hour';
+    if (minutes < 1440) {
+      const hours = Math.round(minutes / 60);
+      return hours === 1 ? '1 hour' : `${hours} hours`;
+    }
+    if (minutes === 1440) return '1 day';
+    if (minutes < 10080) {
+      const days = Math.round(minutes / 1440);
+      return days === 1 ? '1 day' : `${days} days`;
+    }
+    return '1 week';
+  };
+
+  const handleMessageExpirySelected = (minutes) => {
+    if (minutes === null) {
+      setMessageExpiryEnabled(false);
+      setMessageExpiryMinutes(null);
+      setMessageExpiryLabel('6W DEFAULT');
+      messageExpirationManager.stopCleanupRoutine();
+      console.log('Message expiration disabled');
+      Alert.alert('Settings Updated', 'Message expiration disabled');
+      return;
+    }
+
+    const badge = formatExpiryBadge(minutes);
+    const description = formatExpiryDescription(minutes);
+
+    setMessageExpiryEnabled(true);
+    setMessageExpiryMinutes(minutes);
+    setMessageExpiryLabel(badge);
+    messageExpirationManager.startCleanupRoutine();
+    console.log(`Message expiry set to ${description}`);
+    Alert.alert('Settings Updated', `Messages will expire after ${description}`);
+  };
+
+  useEffect(() => {
+    let cancelled = false;
+
+    if (isAuthenticated) {
+      clipboardSecurityManager.enterSecureArea('main_app');
+      setClipboardRestricted(true);
+
+      vaultDoubleSecurityManager.initialize().then(() => {
+        if (cancelled) {
+          return;
+        }
+
+        const status = vaultDoubleSecurityManager.getStatus();
+        setVaultConfigured(status.passphraseVerified || status.pinVerified);
+        setVaultUnlocked(status.vaultUnlocked);
+        setFakeDialMode(status.fakeDialActive);
+      });
+
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    clipboardSecurityManager.exitSecureArea('main_app');
+    setClipboardRestricted(false);
+    setCurrentView('auth');
+    threatDetector.stopMonitoring();
+    stopMonitoring();
+    setShowContactManager(false);
+    setShowRemoteKillSystem(false);
+    setShowMessageExpirationSettings(false);
+    setShowFileSharing(false);
+    setShowVoiceMessages(false);
+    setShowGroupChatManager(false);
+    setShowVaultSetup(false);
+    setShowVaultUnlock(false);
+    setVaultUnlocked(false);
+    setFakeDialMode(false);
+    setTapSequence([]);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isAuthenticated, stopMonitoring]);
 
   // Authentication Screen
   if (!isAuthenticated) {
@@ -244,62 +413,67 @@ export default function App() {
         )}
       </TouchableOpacity>
       
-      <ScrollView style={styles.content}>
-        <View style={styles.statusPanel}>
-          <Text style={styles.statusTitle}>🛡️ SECURITY STATUS</Text>
-          <View style={styles.statusGrid}>
-            <View style={styles.statusItem}>
-              <Text style={styles.statusLabel}>Vanish Protocol</Text>
-              <Text style={styles.statusValue}>✅ ACTIVE</Text>
+        <ScrollView style={styles.content}>
+          <View style={styles.statusPanel}>
+            <Text style={styles.statusTitle}>🛡️ SECURITY STATUS</Text>
+            <View style={styles.statusGrid}>
+              <View style={styles.statusItem}>
+                <Text style={styles.statusLabel}>Vanish Protocol</Text>
+                <Text style={styles.statusValue}>✅ ACTIVE</Text>
+              </View>
+              <View style={styles.statusItem}>
+                <Text style={styles.statusLabel}>Threat Detection</Text>
+                <Text style={[styles.statusValue, { color: getThreatColor(threatLevel) }]}>
+                  {threatLevel.toUpperCase()}
+                </Text>
+              </View>
+              <View style={styles.statusItem}>
+                <Text style={styles.statusLabel}>DEFCON Level</Text>
+                <Text style={styles.statusValue}>5 - NORMAL</Text>
+              </View>
+              <View style={styles.statusItem}>
+                <Text style={styles.statusLabel}>STEELOS-Shredder</Text>
+                <Text style={styles.statusValue}>🔥 READY</Text>
+              </View>
+              <View style={styles.statusItem}>
+                <Text style={styles.statusLabel}>Auto-Reboot</Text>
+                <Text style={styles.statusValue}>
+                  {nextRebootTime
+                    ? `⏰ ${nextRebootTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+                    : '🔄 ACTIVE'}
+                </Text>
+              </View>
+              <View style={styles.statusItem}>
+                <Text style={styles.statusLabel}>Next Schedule</Text>
+                <Text style={styles.statusValue}>
+                  {rebootWarning ? '⚠️ WARNING' : '2AM/2PM'}
+                </Text>
+              </View>
+              <View style={styles.statusItem}>
+                <Text style={styles.statusLabel}>Msg Expiration</Text>
+                <Text style={styles.statusValue}>
+                  {messageExpiryEnabled ? `⏰ ${messageExpiryLabel}` : '❌ DISABLED'}
+                </Text>
+              </View>
+              <View style={styles.statusItem}>
+                <Text style={styles.statusLabel}>Clipboard</Text>
+                <Text style={styles.statusValue}>
+                  {clipboardRestricted ? '🚫 RESTRICTED' : '✅ NORMAL'}
+                </Text>
+              </View>
+              <View style={styles.statusItem}>
+                <Text style={styles.statusLabel}>Vault Security</Text>
+                <Text style={styles.statusValue}>
+                  {fakeDialMode
+                    ? '🎭 FAKE MODE'
+                    : vaultUnlocked
+                      ? '🔓 UNLOCKED'
+                      : vaultConfigured
+                        ? '🔒 LOCKED'
+                        : '⚙️ SETUP'}
+                </Text>
+              </View>
             </View>
-            <View style={styles.statusItem}>
-              <Text style={styles.statusLabel}>Threat Detection</Text>
-              <Text style={[styles.statusValue, { color: getThreatColor(threatLevel) }]}>
-                {threatLevel.toUpperCase()}
-              </Text>
-            </View>
-            <View style={styles.statusItem}>
-              <Text style={styles.statusLabel}>DEFCON Level</Text>
-              <Text style={styles.statusValue}>5 - NORMAL</Text>
-            </View>
-            <View style={styles.statusItem}>
-              <Text style={styles.statusLabel}>STEELOS-Shredder</Text>
-              <Text style={styles.statusValue}>🔥 READY</Text>
-            </View>
-            <View style={styles.statusItem}>
-              <Text style={styles.statusLabel}>Auto-Reboot</Text>
-              <Text style={styles.statusValue}>
-                {nextRebootTime ? 
-                  `⏰ ${nextRebootTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}` : 
-                  '🔄 ACTIVE'
-                }
-              </Text>
-            </View>
-            <View style={styles.statusItem}>
-              <Text style={styles.statusLabel}>Next Schedule</Text>
-              <Text style={styles.statusValue}>
-                {rebootWarning ? '⚠️ WARNING' : '2AM/2PM'}
-              </Text>
-            </View>
-            <View style={styles.statusItem}>
-              <Text style={styles.statusLabel}>Msg Expiration</Text>
-              <Text style={styles.statusValue}>
-                {messageExpiryEnabled ? '⏰ ACTIVE' : '❌ DISABLED'}
-              </Text>
-            </View>
-            <View style={styles.statusItem}>
-              <Text style={styles.statusLabel}>Clipboard</Text>
-              <Text style={styles.statusValue}>
-                {clipboardRestricted ? '🚫 RESTRICTED' : '✅ NORMAL'}
-              </Text>
-            </View>
-            <View style={styles.statusItem}>
-              <Text style={styles.statusLabel}>Vault Security</Text>
-              <Text style={styles.statusValue}>
-                {fakeDialMode ? '🎭 FAKE MODE' : vaultUnlocked ? '🔓 UNLOCKED' : vaultConfigured ? '🔒 LOCKED' : '⚙️ SETUP'}
-              </Text>
-            </View>
-          </View>
           
           {/* Message Expiry Settings Access */}
           <TouchableOpacity 
@@ -310,54 +484,70 @@ export default function App() {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity 
-          style={styles.actionButton}
-          onPress={() => setCurrentView('chat')}
-        >
-          <Text style={styles.actionButtonText}>💬 Open Secure Chat</Text>
-        </TouchableOpacity>
+          <TouchableOpacity 
+            style={styles.actionButton}
+            onPress={() => setCurrentView('chat')}
+          >
+            <Text style={styles.actionButtonText}>💬 Open Secure Chat</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity 
-          style={[styles.actionButton, { backgroundColor: '#28a745' }]}
-          onPress={() => setShowContactManager(true)}
-        >
-          <Text style={styles.actionButtonText}>📇 Secure Contacts</Text>
-        </TouchableOpacity>
+          <TouchableOpacity 
+            style={[styles.actionButton, { backgroundColor: '#28a745' }]}
+            onPress={() => setShowContactManager(true)}
+          >
+            <Text style={styles.actionButtonText}>📇 Secure Contacts</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity 
-          style={[styles.actionButton, { backgroundColor: '#ef4444' }]}
-          onPress={() => setShowMessageExpirationSettings(true)}
-        >
-          <Text style={styles.actionButtonText}>⏰ Message Expiry Settings</Text>
-        </TouchableOpacity>
+          <TouchableOpacity 
+            style={[styles.actionButton, { backgroundColor: '#1d4ed8' }]}
+            onPress={() => setShowGroupChatManager(true)}
+          >
+            <Text style={styles.actionButtonText}>👥 Group Chats</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity 
-          style={[styles.actionButton, { backgroundColor: '#9333ea' }]}
-          onPress={() => setShowFileSharing(true)}
-        >
-          <Text style={styles.actionButtonText}>📁 File Sharing</Text>
-        </TouchableOpacity>
+          <TouchableOpacity 
+            style={[styles.actionButton, { backgroundColor: '#ef4444' }]}
+            onPress={() => setShowMessageExpirationSettings(true)}
+          >
+            <Text style={styles.actionButtonText}>⏰ Message Expiry Settings</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity 
-          style={[styles.actionButton, { backgroundColor: '#059669' }]}
-          onPress={() => setShowVoiceMessages(true)}
-        >
-          <Text style={styles.actionButtonText}>🎤 Voice Messages</Text>
-        </TouchableOpacity>
+          <TouchableOpacity 
+            style={[styles.actionButton, { backgroundColor: '#0ea5e9' }]}
+            onPress={() => (vaultConfigured ? setShowVaultUnlock(true) : setShowVaultSetup(true))}
+          >
+            <Text style={styles.actionButtonText}>
+              {vaultConfigured ? '🔐 Open Secure Vault' : '🛠️ Configure Secure Vault'}
+            </Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity 
-          style={[styles.actionButton, { backgroundColor: '#ff4500' }]}
-          onPress={() => setShowRemoteKillSystem(true)}
-        >
-          <Text style={styles.actionButtonText}>🎯 Remote Kill System</Text>
-        </TouchableOpacity>
+          <TouchableOpacity 
+            style={[styles.actionButton, { backgroundColor: '#9333ea' }]}
+            onPress={() => setShowFileSharing(true)}
+          >
+            <Text style={styles.actionButtonText}>📁 File Sharing</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity 
-          style={[styles.actionButton, { backgroundColor: '#666' }]}
-          onPress={() => setCurrentView('demo')}
-        >
-          <Text style={styles.actionButtonText}>🚀 Demo Vanish Protocol</Text>
-        </TouchableOpacity>
+          <TouchableOpacity 
+            style={[styles.actionButton, { backgroundColor: '#059669' }]}
+            onPress={() => setShowVoiceMessages(true)}
+          >
+            <Text style={styles.actionButtonText}>🎤 Voice Messages</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={[styles.actionButton, { backgroundColor: '#ff4500' }]}
+            onPress={() => setShowRemoteKillSystem(true)}
+          >
+            <Text style={styles.actionButtonText}>🎯 Remote Kill System</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={[styles.actionButton, { backgroundColor: '#666' }]}
+            onPress={() => setCurrentView('demo')}
+          >
+            <Text style={styles.actionButtonText}>🚀 Demo Vanish Protocol</Text>
+          </TouchableOpacity>
 
         {currentView === 'chat' && (
           <View style={styles.chatSection}>
@@ -446,16 +636,13 @@ export default function App() {
         }}
       />
       
-      {/* Message Expiration Settings Modal */}
-      <MessageExpirationSettings
-        visible={showMessageExpirationSettings}
-        onClose={() => setShowMessageExpirationSettings(false)}
-        onExpirySelected={(minutes) => {
-          console.log(`Message expiry set to: ${minutes ? minutes + ' minutes' : 'disabled'}`);
-          Alert.alert('Settings Updated', minutes ? `Messages will expire after ${minutes} minutes` : 'Message expiration disabled');
-        }}
-        currentExpiryMinutes={null}
-      />
+        {/* Message Expiration Settings Modal */}
+        <MessageExpirationSettings
+          visible={showMessageExpirationSettings}
+          onClose={() => setShowMessageExpirationSettings(false)}
+          onExpirySelected={handleMessageExpirySelected}
+          currentExpiryMinutes={messageExpiryMinutes}
+        />
 
       {/* Vault Double Security Setup Modal */}
       <VaultDoubleSecuritySetup
@@ -473,6 +660,7 @@ export default function App() {
         visible={showVaultUnlock}
         onClose={() => setShowVaultUnlock(false)}
         onUnlocked={() => {
+            setVaultConfigured(true);
           setVaultUnlocked(true);
           setFakeDialMode(false);
           console.log('✅ Vault unlocked successfully');

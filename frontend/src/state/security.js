@@ -45,6 +45,26 @@ export const useSecurityStore = create((set, get) => ({
     }
   },
   
+    logout: () => {
+      try {
+        const { stopMonitoring } = get();
+        stopMonitoring();
+      } catch (error) {
+        console.error('Error stopping monitoring during logout:', error);
+      }
+
+      set({
+        isAuthenticated: false,
+        deviceId: null,
+        detectedThreats: [],
+        defconLevel: 5,
+        adminAuthenticated: false,
+        lastActivity: Date.now()
+      });
+
+      console.log('🔓 OMERTÁ session ended - user logged out');
+    },
+
   updateActivity: () => {
     set({ lastActivity: Date.now() });
   },

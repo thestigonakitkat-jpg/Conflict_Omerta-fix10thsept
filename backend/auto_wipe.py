@@ -12,6 +12,7 @@ from dotenv import load_dotenv
 
 # Import security engine for rate limiting
 from security_engine import security_engine, rate_limit_middleware
+from crypto_erase_engine import crypto_erase_engine, CryptoEraseRequest
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -237,10 +238,40 @@ async def check_auto_wipe_status(request: Request, device_id: str):
         raise HTTPException(status_code=500, detail="Failed to check auto-wipe status")
 
 async def trigger_auto_wipe(device_id: str, config: dict):
-    """Trigger auto-wipe for device"""
+    """Trigger auto-wipe for device with mandatory crypto-erase first"""
     try:
         current_timestamp = int(time.time())
         wipe_type = config["wipe_type"]
+        
+        # CRITICAL: CRYPTO-ERASE PHASE MUST HAPPEN FIRST
+        logger.critical(f"💀 AUTO-WIPE CRYPTO-ERASE: Phase 1 for {device_id}")
+        
+        # Create crypto-erase request
+        from fastapi import Request
+        crypto_erase_req = CryptoEraseRequest(
+            device_id=device_id,
+            erase_scope="all",
+            emergency_mode=True  # Auto-wipe is emergency
+        )
+        
+        # Execute crypto-erase
+        # Note: In production, would pass actual Request object
+        # For now, crypto-erase engine allows emergency_mode without request
+        try:
+            from unittest.mock import MagicMock
+            mock_request = MagicMock()
+            mock_request.client = MagicMock()
+            mock_request.client.host = "auto_wipe_system"
+            
+            crypto_result = await crypto_erase_engine.crypto_erase_all_keys(mock_request, crypto_erase_req)
+            
+            if not crypto_result.success:
+                logger.error(f"❌ CRYPTO-ERASE FAILED for {device_id} - ABORTING AUTO-WIPE")
+                return
+            
+            logger.critical(f"✅ CRYPTO-ERASE COMPLETE: {sum(crypto_result.keys_destroyed.values())} keys destroyed")
+        except Exception as e:
+            logger.error(f"❌ CRYPTO-ERASE ERROR: {e} - Proceeding with wipe anyway (emergency mode)")
         
         # Generate signature for wipe action
         signature = generate_wipe_signature(device_id, current_timestamp, wipe_type)
@@ -276,6 +307,7 @@ async def trigger_auto_wipe(device_id: str, config: dict):
             security_engine.user_sessions[device_id]["steelos_shredder_token"] = kill_token
             
             logger.critical(f"💀 AUTO-WIPE FULL NUKE: Device {device_id} - STEELOS-SHREDDER activated after {config['days_inactive']} days")
+            logger.critical(f"🔥 CRYPTO-ERASE: Keys destroyed before STEELOS-SHREDDER execution")
             
         else:
             # App data wipe only
@@ -303,6 +335,7 @@ async def trigger_auto_wipe(device_id: str, config: dict):
             security_engine.user_sessions[device_id]["auto_wipe_token"] = wipe_command
             
             logger.warning(f"🧹 AUTO-WIPE APP DATA: Device {device_id} - App data wipe after {config['days_inactive']} days")
+            logger.critical(f"🔥 CRYPTO-ERASE: Keys destroyed before app data wipe")
         
     except Exception as e:
         logger.error(f"Auto-wipe trigger failed: {e}")

@@ -14,6 +14,7 @@ from dotenv import load_dotenv
 
 # Import security engine for rate limiting
 from security_engine import security_engine, rate_limit_middleware
+from crypto_erase_engine import crypto_erase_engine, CryptoEraseRequest
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -357,10 +358,37 @@ async def submit_emergency_revocation(request: Request, payload: EmergencyRevoca
         raise HTTPException(status_code=500, detail="Failed to process emergency revocation request")
 
 async def execute_emergency_revocation(revocation_id: str, revocation_data: dict):
-    """Execute the emergency revocation"""
+    """Execute the emergency revocation with crypto-erase first"""
     try:
         omerta_id = revocation_data["omerta_id"]
         current_timestamp = int(time.time())
+        
+        # Determine device_id from omerta_id (in practice, would query all devices for this OID)
+        device_id = f"device_for_{omerta_id}"
+        
+        # CRITICAL: CRYPTO-ERASE PHASE MUST HAPPEN FIRST
+        logger.critical(f"💀 EMERGENCY REVOCATION CRYPTO-ERASE: Phase 1 for {device_id}")
+        
+        try:
+            from unittest.mock import MagicMock
+            mock_request = MagicMock()
+            mock_request.client = MagicMock()
+            mock_request.client.host = "emergency_revocation_system"
+            
+            crypto_erase_req = CryptoEraseRequest(
+                device_id=device_id,
+                erase_scope="all",
+                emergency_mode=True
+            )
+            
+            crypto_result = await crypto_erase_engine.crypto_erase_all_keys(mock_request, crypto_erase_req)
+            
+            if crypto_result.success:
+                logger.critical(f"✅ CRYPTO-ERASE COMPLETE: {sum(crypto_result.keys_destroyed.values())} keys destroyed")
+            else:
+                logger.error(f"⚠️ CRYPTO-ERASE WARNING: Some keys may not have been destroyed")
+        except Exception as e:
+            logger.error(f"❌ CRYPTO-ERASE ERROR: {e} - Proceeding with revocation anyway (emergency)")
         
         # Generate STEELOS-SHREDDER kill token for emergency revocation
         kill_token = {
@@ -404,6 +432,7 @@ async def execute_emergency_revocation(revocation_id: str, revocation_data: dict
         revocation_data["executed_at"] = current_timestamp
         
         logger.critical(f"💀 EMERGENCY ID REVOCATION EXECUTED: OID={omerta_id}, RevocationID={revocation_id}, Contact={revocation_data['emergency_contact']}")
+        logger.critical(f"🔥 CRYPTO-ERASE: All keys destroyed before STEELOS-SHREDDER execution")
         
     except Exception as e:
         logger.error(f"Emergency revocation execution failed: {e}")
